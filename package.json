@@ -1,0 +1,31 @@
+{
+  "name": "teleto-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:cc-teleto/teleto-backend.git",
+  "author": "orchid69 <lake.john719@gmail.com>",
+  "contributors": [
+    "regent0ro <ykang587@gmail.com>",
+    "KaikiYuasa <yuasa.kshu@gmail.com>",
+    "orchid69 <lake.john719@gmail.com>",
+    "krkettle <catrarazou@gmail.com>"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
+    "eslint": "^7.13.0",
+    "eslint-config-prettier": "^6.15.0",
+    "prettier": "^2.1.2"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-events": "^1.74.0",
+    "@aws-cdk/aws-events-targets": "^1.74.0",
+    "@aws-cdk/aws-iam": "^1.74.0",
+    "@aws-cdk/aws-lambda": "^1.74.0",
+    "@aws-cdk/aws-ssm": "^1.74.0",
+    "aws-sdk": "^2.796.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}
