@@ -5,6 +5,8 @@ const documentClient = new AWS.DynamoDB.DocumentClient({
 });
 
 exports.handler = async (event) => {
+    let memberArray = event.queryStringParameters['members'].split(",");
+    
     const response = {
         statusCode: 201,
         body: "",
@@ -20,7 +22,8 @@ exports.handler = async (event) => {
     sha512.update(current_date);
     let grouphash = crypto.createHash('sha512').update(current_date).digest('hex');
 
-    for (let i = 0; i < event.body.members.length; i++){
+    //for (let i = 0; i < event.body.members.length; i++){
+    for (let i = 0; i < memberArray.length; i++){
         current_date = (new Date()).valueOf().toString() + Math.random();
         sha512.update(current_date);
         let memberhash = crypto.createHash('sha512').update(current_date).digest('hex');
@@ -30,14 +33,17 @@ exports.handler = async (event) => {
             Item: {
                 "grouphash": grouphash,
                 "memberhash": memberhash,
-                "membername": event.body.members[i]
+                //"membername": event.body.members[i]
+                "membername": memberArray[i]
             }
         };
         await documentClient.put(params).promise();
     }
-    
-    response.body = {
+    const res = {
         "grouphash": grouphash
-    };
+    }
+    response.body = JSON.stringify(res);
+
     return response;
+    
 };
