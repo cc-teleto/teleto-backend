@@ -1,0 +1,87 @@
+---
+swagger: "2.0"
+info:
+  version: "2020-11-20T17:01:55Z"
+  title: "teleto API"
+host: "ttnxcty7yc.execute-api.us-east-2.amazonaws.com"
+basePath: "/stage"
+schemes:
+- "https"
+paths:
+  /members:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "grouphash"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "random"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/getMembers"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+    post:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "members"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/postMembers"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+  /topics:
+    get:
+      produces:
+      - "application/json"
+      parameters:
+      - name: "grouphash"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "random"
+        in: "query"
+        required: false
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/getTopics"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+definitions:
+  getTopics:
+    type: "object"
+    properties:
+      topic:
+        type: "string"
+    title: "getTopicsModel"
+  postMembers:
+    type: "object"
+    properties:
+      grouphash:
+        type: "string"
+    title: "postMembersModel"
+  getMembers:
+    type: "object"
+    properties:
+      membername:
+        type: "string"
+    title: "getMemberstModel"
