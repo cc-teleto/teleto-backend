@@ -11,6 +11,15 @@
     "krkettle <catrarazou@gmail.com>"
   ],
   "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "test:app": "jest --testMatch **/message.test.ts",
+    "cdk": "cdk",
+    "cdk:diff": "cdk diff || true",
+    "cdk:deploy": "cdk deploy --require-approval never"
+  },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "@typescript-eslint/parser": "^4.8.1",

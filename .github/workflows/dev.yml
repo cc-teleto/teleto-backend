@@ -24,8 +24,17 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Setup dependencies
-        run: npm ci
+      - name: Cache node modules.
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/cache
+            !~/cache/exclude
+            **/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+
+      - name: Install Dependencies
+        run: npm install
 
       - name: Build
         run: npm run build
