@@ -30,6 +30,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: "${{ secrets.TELETO_BACKEND_AWS_S3_KEY }}"
         run: |
           aws s3 cp \
-            --recursive \
             --region us-east-2 \
-            APIDocumemts/index.html s3://teleto-page-dev/APIDocumemts/APIDocumemts.html
+            ./APIDocumemts/index.html s3://teleto-page-dev/APIDocumemts/APIDocumemts.html
