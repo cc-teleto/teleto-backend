@@ -18,24 +18,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # - name: Install openjdk-8
-      #   run: sudo apt-get install openjdk-8-jre
-
       - name: Download Swagger Codegen
         run: wget https://oss.sonatype.org/content/repositories/releases/io/swagger/swagger-codegen-cli/2.2.1/swagger-codegen-cli-2.2.1.jar
 
       - name: Convert file
         run: java -jar swagger-codegen-cli-2.2.1.jar generate -i ./api/teletoAPI.yaml -l html2 -o APIdoc
 
-      - name: Output file contents
-        run: cat ./APIdoc/index.html
-
-      # - name: Deploy to S3
-      #   env:
-      #     AWS_ACCESS_KEY_ID: "${{ secrets.TELETO_BACKEND_AWS_S3_ID }}"
-      #     AWS_SECRET_ACCESS_KEY: "${{ secrets.TELETO_BACKEND_AWS_S3_KEY }}"
-      #   run: |
-      #     aws s3 cp \
-      #       --recursive \
-      #       --region us-east-2 \
-      #       build s3://teleto-page-dev
+      - name: Deploy to S3
+        env:
+          AWS_ACCESS_KEY_ID: "${{ secrets.TELETO_BACKEND_AWS_S3_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.TELETO_BACKEND_AWS_S3_KEY }}"
+        run: |
+          aws s3 cp \
+            --recursive \
+            --region us-east-2 \
+            APIdoc s3://teleto-page-dev
