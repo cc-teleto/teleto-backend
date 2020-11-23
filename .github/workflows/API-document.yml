@@ -25,7 +25,7 @@ jobs:
         run: wget https://oss.sonatype.org/content/repositories/releases/io/swagger/swagger-codegen-cli/2.2.1/swagger-codegen-cli-2.2.1.jar
 
       - name: Convert file
-        run: java -jar swagger-codegen-cli-2.2.1.jar generate -i ./api/teletoAPI.yml html2 -o APIdoc
+        run: java -jar swagger-codegen-cli-2.2.1.jar generate -i ./api/teletoAPI.yml -l html2 -o APIdoc
 
       - name: Output file contents
         run: cat ./APIdoc/index.html
