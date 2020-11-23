@@ -1,7 +1,7 @@
 ---
 swagger: "2.0"
 info:
-  version: "2020-11-20T17:01:55Z"
+  version: "2020-11-23T07:48:34Z"
   title: "teleto API"
 host: "ttnxcty7yc.execute-api.us-east-2.amazonaws.com"
 basePath: "/stage"
@@ -29,21 +29,48 @@ paths:
           headers:
             Access-Control-Allow-Origin:
               type: "string"
+        400:
+          description: "400 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
     post:
       produces:
       - "application/json"
-      parameters:
-      - name: "members"
-        in: "query"
-        required: false
-        type: "string"
       responses:
-        200:
-          description: "200 response"
+        201:
+          description: "201 response"
           schema:
             $ref: "#/definitions/postMembers"
           headers:
             Access-Control-Allow-Origin:
+              type: "string"
+        401:
+          description: "401 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+        402:
+          description: "402 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
               type: "string"
   /topics:
     get:
@@ -66,11 +93,31 @@ paths:
           headers:
             Access-Control-Allow-Origin:
               type: "string"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
 definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"
   getTopics:
     type: "object"
     properties:
-      topic:
+      value:
         type: "string"
     title: "getTopicsModel"
   postMembers:
@@ -78,10 +125,10 @@ definitions:
     properties:
       grouphash:
         type: "string"
-    title: "postMembersModel"
+    title: "grouphashModel"
   getMembers:
     type: "object"
     properties:
-      membername:
+      value:
         type: "string"
     title: "getMemberstModel"
