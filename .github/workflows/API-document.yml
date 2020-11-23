@@ -22,7 +22,7 @@ jobs:
         run: wget https://oss.sonatype.org/content/repositories/releases/io/swagger/swagger-codegen-cli/2.2.1/swagger-codegen-cli-2.2.1.jar
 
       - name: Convert file
-        run: java -jar swagger-codegen-cli-2.2.1.jar generate -i ./api/teletoAPI.yaml -l html2 -o APIdoc
+        run: java -jar swagger-codegen-cli-2.2.1.jar generate -i ./api/teletoAPI.yaml -l html2 -o APIDocumemts
 
       - name: Deploy to S3
         env:
@@ -32,4 +32,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region us-east-2 \
-            APIdoc s3://teleto-page-dev
+            APIDocumemts/index.html s3://teleto-page-dev/APIDocumemts/APIDocumemts.html
