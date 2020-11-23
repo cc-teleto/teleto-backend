@@ -1,0 +1,38 @@
+name: Create API Document
+
+# on:
+#   push:
+#     paths:
+#       - "api/teletoAPI.yaml"
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  aws_cdk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install Swagger Codegen
+        run: brew install swagger-codegen
+
+      - name: Convert static html
+        run: swagger-codegen generate -i ./api/teletoAPI.yaml -l html2 -o teletoAPI-documents.html
+
+      - name: Output file contents
+        run: cat ./redoc-static.html
+
+      # - name: Deploy to S3
+      #   env:
+      #     AWS_ACCESS_KEY_ID: "${{ secrets.TELETO_BACKEND_AWS_S3_ID }}"
+      #     AWS_SECRET_ACCESS_KEY: "${{ secrets.TELETO_BACKEND_AWS_S3_KEY }}"
+      #   run: |
+      #     aws s3 cp \
+      #       --recursive \
+      #       --region us-east-2 \
+      #       build s3://teleto-page-dev
