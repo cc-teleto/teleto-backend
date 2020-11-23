@@ -26,8 +26,8 @@ jobs:
 
       - name: Deploy to S3
         env:
-          AWS_ACCESS_KEY_ID: "${{ secrets.TELETO_BACKEND_AWS_S3_ID }}"
-          AWS_SECRET_ACCESS_KEY: "${{ secrets.TELETO_BACKEND_AWS_S3_KEY }}"
+          AWS_ACCESS_KEY_ID: "${{ secrets.TELETO_BACKEND_AWS_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.TELETO_BACKEND_AWS_KEY }}"
         run: |
           aws s3 cp \
             --region us-east-2 \
