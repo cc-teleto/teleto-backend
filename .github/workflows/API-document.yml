@@ -11,21 +11,22 @@ on:
       - dev
 
 jobs:
-  aws_cdk:
+  create_documents:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Install Swagger Codegen
-        run: brew install swagger-codegen
+      # https://gist.github.com/oseiskar/dbd51a3727fc96dcf5ed189fca491fb3
+      - name: Install PyYAML
+        run: pip install -U PyYAML
 
       - name: Convert static html
-        run: swagger-codegen generate -i ./api/teletoAPI.yaml -l html2 -o teletoAPI-documents.html
+        run: python swagger-yaml-to-html.py ./api/teletoAPI.yaml doc.html
 
       - name: Output file contents
-        run: cat ./redoc-static.html
+        run: cat ./doc.html
 
       # - name: Deploy to S3
       #   env:
