@@ -22,8 +22,13 @@ jobs:
       - name: Install PyYAML
         run: pip install -U PyYAML
 
+      - name: Clone oseiskar/swagger-yaml-to-html.py
+        run: |
+          git clone https://gist.github.com/oseiskar/dbd51a3727fc96dcf5ed189fca491fb3
+          cd dbd51a3727fc96dcf5ed189fca491fb3
+
       - name: Convert static html
-        run: python swagger-yaml-to-html.py ./api/teletoAPI.yaml doc.html
+        run: python swagger-yaml-to-html.py ../api/teletoAPI.yaml doc.html
 
       - name: Output file contents
         run: cat ./doc.html
