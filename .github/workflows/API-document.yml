@@ -1,14 +1,9 @@
 name: Create API Document
 
-# on:
-#   push:
-#     paths:
-#       - "api/teletoAPI.yaml"
-
 on:
   push:
-    branches:
-      - dev
+    paths:
+      - "api/teletoAPI.yaml"
 
 jobs:
   create_documents:
