@@ -18,20 +18,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # https://gist.github.com/oseiskar/dbd51a3727fc96dcf5ed189fca491fb3
-      - name: Install PyYAML
-        run: pip install -U PyYAML
+      # - name: Install openjdk-8
+      #   run: sudo apt-get install openjdk-8-jre
 
-      - name: Clone oseiskar/swagger-yaml-to-html.py
-        run: |
-          git clone https://gist.github.com/oseiskar/dbd51a3727fc96dcf5ed189fca491fb3
-          cd dbd51a3727fc96dcf5ed189fca491fb3
+      - name: Download Swagger Codegen
+        run: wget https://oss.sonatype.org/content/repositories/releases/io/swagger/swagger-codegen-cli/2.2.1/swagger-codegen-cli-2.2.1.jar
 
-      - name: Convert static html
-        run: python swagger-yaml-to-html.py ../api/teletoAPI.yaml doc.html
+      - name: Convert file
+        run: java -jar swagger-codegen-cli-2.2.1.jar generate -i ./api/teletoAPI.yml html2 -o APIdoc
 
       - name: Output file contents
-        run: cat ./doc.html
+        run: cat ./APIdoc/index.html
 
       # - name: Deploy to S3
       #   env:
