@@ -4,4 +4,6 @@ import * as cdk from '@aws-cdk/core';
 import { TeletoBackendStack } from '../lib/teleto-backend-stack';
 
 const app = new cdk.App();
-new TeletoBackendStack(app, 'TeletoBackendStack');
+new TeletoBackendStack(app, 'TeletoBackendStack', {
+  ApiStage: 'prod',
+});

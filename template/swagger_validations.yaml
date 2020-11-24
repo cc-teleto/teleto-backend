@@ -1,0 +1,10 @@
+---
+paths:
+    /items/{alfInstanceId}:
+        get:
+        parameters:
+            - in: path
+            Name: alfInstanceId
+            required: false
+            type: string
+            $ ref: '#/parameters/alfInstanceId
