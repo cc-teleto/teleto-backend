@@ -1,35 +1,27 @@
 {
   "name": "teleto-backend",
   "version": "0.1.0",
-  "repository": "git@github.com:cc-teleto/teleto-backend.git",
-  "author": "orchid69 <lake.john719@gmail.com>",
-  "contributors": [
-    "regent0ro <ykang587@gmail.com>",
-    "KaikiYuasa <yuasa.kshu@gmail.com>",
-    "orchid69 <lake.john719@gmail.com>",
-    "krkettle <catrarazou@gmail.com>"
-  ],
-  "license": "MIT",
   "bin": {
     "teleto-backend": "bin/teleto-backend.js"
   },
   "scripts": {
-    "build": "echo \"The build step is not required when using JavaScript!\" && exit 0",
+    "build": "tsc",
+    "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk",
-    "cdk:diff": "cdk diff || true",
-    "cdk:deploy": "cdk deploy --require-approval never"
+    "cdk": "cdk"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.74.0",
-    "aws-cdk": "1.74.0",
-    "eslint": "^7.14.0",
-    "eslint-config-prettier": "^6.15.0",
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
     "jest": "^26.4.2",
-    "prettier": "^2.2.0"
+    "ts-jest": "^26.2.0",
+    "aws-cdk": "1.74.0",
+    "ts-node": "^8.1.0",
+    "typescript": "~3.9.7"
   },
   "dependencies": {
-    "@aws-cdk/aws-lambda": "^1.74.0",
-    "@aws-cdk/core": "1.74.0"
+    "@aws-cdk/core": "1.74.0",
+    "source-map-support": "^0.5.16"
   }
 }
