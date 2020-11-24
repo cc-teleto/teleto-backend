@@ -35,6 +35,19 @@ paths:
             Access-Control-Allow-Origin:
               type: "string"
     post:
+      parameters:
+        - in: body
+          name: members
+          schema:
+            type: object
+            properties:
+              members:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
       produces:
       - "application/json"
       responses:
