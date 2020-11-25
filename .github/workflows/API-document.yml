@@ -14,10 +14,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Download Swagger Codegen
-        run: wget https://oss.sonatype.org/content/repositories/releases/io/swagger/swagger-codegen-cli/2.2.1/swagger-codegen-cli-2.2.1.jar
+        run: wget https://repo1.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.23/swagger-codegen-cli-3.0.23.jar -O swagger-codegen-cli.jar
 
       - name: Convert file
-        run: java -jar swagger-codegen-cli-2.2.1.jar generate -i ./api/teletoAPI.yaml -l html2 -o APIDocumemts
+        run: java -jar swagger-codegen-cli.jar generate -i ./api/teletoAPI.yaml -l html2 -o APIDocumemts
 
       - name: Deploy to S3
         env:
