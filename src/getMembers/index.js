@@ -32,7 +32,7 @@ exports.handler = async(event) => {
             }
             else {
                 result = resultJSON.Items;
-                response.body = JSON.stringify(result);
+                response.body = JSON.stringify({"members": result});
             }
         }
         else {

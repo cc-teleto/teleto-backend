@@ -22,11 +22,16 @@ exports.handler = async(event) => {
             if (body.members)
                 memberArray = body.members;
 
+            let grouphash;
             let sha512 = crypto.createHash('sha512');
-
-            let current_date = (new Date()).valueOf().toString() + Math.random();
-            sha512.update(current_date);
-            let grouphash = crypto.createHash('sha512').update(current_date).digest('hex');
+            let current_date;
+            if (event.queryStringParameters !== null){
+                grouphash = event.queryStringParameters['grouphash'];
+            } else {
+                current_date = (new Date()).valueOf().toString() + Math.random();
+                sha512.update(current_date);
+                grouphash = crypto.createHash('sha512').update(current_date).digest('hex');
+            }
 
             for (let i = 0; i < memberArray.length; i++) {
                 current_date = (new Date()).valueOf().toString() + Math.random();
