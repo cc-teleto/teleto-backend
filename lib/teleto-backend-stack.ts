@@ -37,24 +37,28 @@ export class TeletoBackendStack extends cdk.Stack {
       environment: {
         TABLE_NAME: dynamoTable.tableName,
         PRIMARY_KEY: 'grouphash',
+        REGION: process.env.REGION ? process.env.REGION : 'ap-north-east1',
       },
     });
-    const forceLambdaId = GetMembersLambda.node.defaultChild as lambda.CfnFunction;
-    forceLambdaId.overrideLogicalId('GetMembersLambda');
+    const forceGetMembersLambdaId = GetMembersLambda.node.defaultChild as lambda.CfnFunction;
+    forceGetMembersLambdaId.overrideLogicalId('GetMembersLambda');
 
-    // const PostMembersLambda = new lambda.Function(this, 'PostMembersLambda', {
-    //   code: new AssetCode('src/postMembers'),
-    //   handler: 'index.handler',
-    //   runtime: lambda.Runtime.NODEJS_12_X,
-    //   environment: {
-    //     TABLE_NAME: dynamoTable.tableName,
-    //     PRIMARY_KEY: 'grouphash',
-    //   },
-    // });
-    // const forceLambdaId = GetMembersLambda.node.defaultChild as lambda.CfnFunction;
-    // forceLambdaId.overrideLogicalId('GetMembersLambda');
+    const PostMembersLambda = new lambda.Function(this, 'PostMembersLambda', {
+      code: new AssetCode('src/postMembers'),
+      handler: 'index.handler',
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: dynamoTable.tableName,
+        PRIMARY_KEY: 'grouphash',
+        REGION: process.env.REGION ? process.env.REGION : 'ap-north-east1',
+      },
+    });
+    const forcePostMembersLambdaId = PostMembersLambda.node.defaultChild as lambda.CfnFunction;
+    forcePostMembersLambdaId.overrideLogicalId('PostMembersLambda');
 
+    // grant access
     dynamoTable.grantFullAccess(GetMembersLambda);
+    dynamoTable.grantFullAccess(PostMembersLambda);
 
     // API Gateway setup
     const ApiStage = new CfnParameter(this, 'ApiStage', {
