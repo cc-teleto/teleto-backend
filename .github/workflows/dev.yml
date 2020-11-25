@@ -39,6 +39,9 @@ jobs:
       # - name: Unit tests
       #   run: yarn test
 
+      - name: TypeScript build
+        run: yarn build
+
       - name: CDK Diff Check
         run: yarn cdk diff
         env:
