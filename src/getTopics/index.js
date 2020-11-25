@@ -60,9 +60,9 @@ exports.handler = async (event) => {
               resultMember = [resultJSON.Items[random]];
               opt[i] = resultMember[0].membername;
             }
-            else if (result[0].topic.option[i] === "trends") {
+            else if (result[0].topic.option[i] === "trends.twitter") {
               params = {
-                TableName: 'Teleto-trends',
+                  TableName: 'Teleto-trends-twitter',
               };
               let resultTrend = "";
               resultJSON = await documentClient.scan(params).promise();
