@@ -1,6 +1,15 @@
 {
   "name": "teleto-backend",
   "version": "0.1.0",
+  "repository": "git@github.com:cc-teleto/teleto-backend.git",	
+  "author": "orchid69 <lake.john719@gmail.com>",	
+  "contributors": [	
+    "regent0ro <ykang587@gmail.com>",	
+    "KaikiYuasa <yuasa.kshu@gmail.com>",	
+    "orchid69 <lake.john719@gmail.com>",	
+    "krkettle <catrarazou@gmail.com>"	
+  ],	
+  "license": "MIT",
   "bin": {
     "teleto-backend": "bin/teleto-backend.js"
   },
