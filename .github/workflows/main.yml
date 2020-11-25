@@ -38,9 +38,9 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      - name: Unit tests
-        if: contains(github.event_name, 'pull_request')
-        run: yarn test
+      # - name: Unit tests
+      #   if: contains(github.event_name, 'pull_request')
+      #   run: yarn test
 
       - name: CDK Diff Check
         if: contains(github.event_name, 'pull_request')
