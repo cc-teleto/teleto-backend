@@ -1,7 +1,7 @@
 openapi: "3.0.1"
 info:
   title: "teleto API"
-  version: "2020-11-24T05:34:25Z"
+  version: "2020-11-25T06:06:04Z"
 servers:
 - url: "https://ttnxcty7yc.execute-api.us-east-2.amazonaws.com/{basePath}"
   variables:
@@ -11,6 +11,10 @@ paths:
   /topics:
     get:
       parameters:
+      - name: "category"
+        in: "query"
+        schema:
+          type: "string"
       - name: "grouphash"
         in: "query"
         schema:
@@ -126,6 +130,9 @@ paths:
           description: "200 response"
           headers:
             Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+            Access-Control-Allow-Methods:
               schema:
                 type: "string"
           content:
