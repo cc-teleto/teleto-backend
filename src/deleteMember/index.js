@@ -1,10 +1,10 @@
-let AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 const documentClient = new AWS.DynamoDB.DocumentClient({
   region: process.env.REGION,
 });
 
 exports.handler = async (event) => {
-  let response = {
+  const response = {
     statusCode: 200,
     body: '',
     headers: {
@@ -14,8 +14,8 @@ exports.handler = async (event) => {
     },
   };
   try {
-    let result = '';
-    let params = {
+    const result = '';
+    const params = {
       TableName: 'Teleto-members',
       Key: {
         grouphash: event.queryStringParameters['grouphash'],
@@ -23,7 +23,7 @@ exports.handler = async (event) => {
       },
     };
     console.log(params);
-    let resultJSON = await documentClient.delete(params).promise();
+    const resultJSON = await documentClient.delete(params).promise();
 
     response.body = JSON.stringify({ memberhash: event.queryStringParameters['memberhash'] });
     return response;

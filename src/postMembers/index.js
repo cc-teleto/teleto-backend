@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-let AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 const documentClient = new AWS.DynamoDB.DocumentClient({
   region: process.env.REGION,
 });
@@ -20,11 +20,11 @@ exports.handler = async (event) => {
   let memberArray;
   try {
     if (event.body) {
-      let body = JSON.parse(event.body);
+      const body = JSON.parse(event.body);
       if (body.members) memberArray = body.members;
 
       let grouphash;
-      let sha512 = crypto.createHash('sha512');
+      const sha512 = crypto.createHash('sha512');
       let current_date;
       if (event.queryStringParameters !== null) {
         grouphash = event.queryStringParameters[TABLE_NAME];
@@ -37,9 +37,9 @@ exports.handler = async (event) => {
       for (let i = 0; i < memberArray.length; i++) {
         current_date = new Date().valueOf().toString() + Math.random();
         sha512.update(current_date);
-        let memberhash = crypto.createHash('sha512').update(current_date).digest('hex');
+        const memberhash = crypto.createHash('sha512').update(current_date).digest('hex');
 
-        let params = {
+        const params = {
           TableName: TABLE_NAME,
           Item: {
             grouphash: grouphash,
