@@ -6,6 +6,7 @@ import assets = require('@aws-cdk/aws-s3-assets');
 import { join } from 'path';
 import { AssetCode } from '@aws-cdk/aws-lambda';
 import { CfnParameter, Fn } from '@aws-cdk/core';
+import { CfnRole, PolicyStatement, Role, ServicePrincipal } from '@aws-cdk/aws-iam';
 
 export interface ApiGatewayProps {
   ApiStage: string;
@@ -37,7 +38,7 @@ export class TeletoBackendStack extends cdk.Stack {
       environment: {
         TABLE_NAME: dynamoTable.tableName,
         PRIMARY_KEY: 'grouphash',
-        REGION: process.env.REGION ? process.env.REGION : 'ap-north-east1',
+        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
       },
     });
     const forceGetMembersLambdaId = GetMembersLambda.node.defaultChild as lambda.CfnFunction;
@@ -50,7 +51,7 @@ export class TeletoBackendStack extends cdk.Stack {
       environment: {
         TABLE_NAME: dynamoTable.tableName,
         PRIMARY_KEY: 'grouphash',
-        REGION: process.env.REGION ? process.env.REGION : 'ap-north-east1',
+        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
       },
     });
     const forcePostMembersLambdaId = PostMembersLambda.node.defaultChild as lambda.CfnFunction;
@@ -66,6 +67,20 @@ export class TeletoBackendStack extends cdk.Stack {
       default: props.ApiStage,
     });
     ApiStage.overrideLogicalId('ApiStage');
+
+    const apiRole = new Role(this, 'apiRole', {
+      roleName: 'apiRole',
+      assumedBy: new ServicePrincipal('apigateway.amazonaws.com'),
+    });
+
+    apiRole.addToPolicy(
+      new PolicyStatement({
+        resources: ['*'],
+        actions: ['lambda:InvokeFunction'],
+      }),
+    );
+    const forceApiRoleId = apiRole.node.defaultChild as CfnRole;
+    forceApiRoleId.overrideLogicalId('apiRole');
 
     // Upload Swagger to S3
     const fileAsset = new assets.Asset(this, 'SwaggerAsset', {

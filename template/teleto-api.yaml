@@ -47,6 +47,8 @@ paths:
         httpMethod: "POST"
         contentHandling: "CONVERT_TO_TEXT"
         type: "aws_proxy"
+        credentials: 
+          Fn::Sub: "${apiRole.Arn}"
     post:
       produces:
       - "application/json"
@@ -85,6 +87,8 @@ paths:
         httpMethod: "POST"
         contentHandling: "CONVERT_TO_TEXT"
         type: "aws_proxy"
+        credentials: 
+          Fn::Sub: "${apiRole.Arn}"
   #   delete:
   #     produces:
   #     - "application/json"
