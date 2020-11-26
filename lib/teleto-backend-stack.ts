@@ -123,10 +123,24 @@ export class TeletoBackendStack extends cdk.Stack {
     const forceGetTopicsLambdaId = GetTopicsLambda.node.defaultChild as lambda.CfnFunction;
     forceGetTopicsLambdaId.overrideLogicalId('GetTopicsLambda');
 
+    const GetTrendsByTwitterLambda = new lambda.Function(this, 'GetTrendsByTwitterLambda', {
+      code: new AssetCode('src/getTrendsByTwitterAPI'),
+      handler: 'index.handler',
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: topicsTable.tableName,
+        PRIMARY_KEY: 'grouphash',
+        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
+      },
+    });
+    const forceGetTrendsByTwitterLambda = GetTrendsByTwitterLambda.node.defaultChild as lambda.CfnFunction;
+    forceGetTrendsByTwitterLambda.overrideLogicalId('GetTrendsByTwitterLambda');
+
     // grant access
     membersTable.grantFullAccess(GetMembersLambda);
     membersTable.grantFullAccess(PostMembersLambda);
     membersTable.grantFullAccess(DeleteMembersLambda);
+    membersTable.grantFullAccess(GetTopicsLambda);
     membersTable.grantFullAccess(GetTopicsLambda);
 
     // API Gateway setup
