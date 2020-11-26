@@ -167,19 +167,30 @@ export class TeletoBackendStack extends cdk.Stack {
     });
     ApiStage.overrideLogicalId('ApiStage');
 
-    const apiRole = new Role(this, 'apiRole', {
-      roleName: 'apiRole',
-      assumedBy: new ServicePrincipal('apigateway.amazonaws.com'),
+    //ApiRole取得
+    const strApiRole = "arn:aws:iam::" + process.env.ACCOUNT_ID + ":role/apiRole";
+    const executionApiRole = iam.Role.fromRoleArn(this, 'Role', strApiRole, {
+      // Set 'mutable' to 'false' to use the role as-is and prevent adding new
+      // policies to it. The default is 'true', which means the role may be
+      // modified as part of the deployment.
+      mutable: false,
     });
 
-    apiRole.addToPolicy(
-      new PolicyStatement({
-        resources: ['*'],
-        actions: ['lambda:InvokeFunction'],
-      }),
-    );
-    const forceApiRoleId = apiRole.node.defaultChild as CfnRole;
-    forceApiRoleId.overrideLogicalId('apiRole');
+    if(typeof executionApiRole !== "undefined"){
+      const apiRole = new Role(this, 'apiRole', {
+        roleName: 'apiRole',
+        assumedBy: new ServicePrincipal('apigateway.amazonaws.com'),
+      });
+
+      apiRole.addToPolicy(
+        new PolicyStatement({
+          resources: ['*'],
+          actions: ['lambda:InvokeFunction'],
+        }),
+      );
+      const forceApiRoleId = apiRole.node.defaultChild as CfnRole;
+      forceApiRoleId.overrideLogicalId('apiRole');
+    }
 
     // Upload Swagger to S3
     const fileAsset = new assets.Asset(this, 'SwaggerAsset', {
