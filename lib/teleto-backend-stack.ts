@@ -4,6 +4,7 @@ import dynamodb = require('@aws-cdk/aws-dynamodb');
 import lambda = require('@aws-cdk/aws-lambda');
 import cdk = require('@aws-cdk/core');
 import assets = require('@aws-cdk/aws-s3-assets');
+import iam = require('@aws-cdk/aws-iam');
 import { join } from 'path';
 import { AssetCode } from '@aws-cdk/aws-lambda';
 import { CfnParameter, Fn } from '@aws-cdk/core';
@@ -71,6 +72,12 @@ export class TeletoBackendStack extends cdk.Stack {
     });
 
     // Lambda setup
+    const executionLambdaRole = iam.Role.fromRoleArn(this, 'Role', 'arn:aws:iam::624623207783:role/LambdaAccessToDynamoDB', {
+      // Set 'mutable' to 'false' to use the role as-is and prevent adding new
+      // policies to it. The default is 'true', which means the role may be
+      // modified as part of the deployment.
+      mutable: false,
+    });
     const GetMembersLambda = new lambda.Function(this, 'GetMembersLambda', {
       code: new AssetCode('src/getMembers'),
       handler: 'index.handler',
@@ -80,6 +87,7 @@ export class TeletoBackendStack extends cdk.Stack {
         PRIMARY_KEY: 'grouphash',
         REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
       },
+      role: executionLambdaRole,
     });
     const forceGetMembersLambdaId = GetMembersLambda.node.defaultChild as lambda.CfnFunction;
     forceGetMembersLambdaId.overrideLogicalId('GetMembersLambda');
@@ -93,6 +101,7 @@ export class TeletoBackendStack extends cdk.Stack {
         PRIMARY_KEY: 'grouphash',
         REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
       },
+      role: executionLambdaRole,
     });
     const forcePostMembersLambdaId = PostMembersLambda.node.defaultChild as lambda.CfnFunction;
     forcePostMembersLambdaId.overrideLogicalId('PostMembersLambda');
@@ -106,6 +115,7 @@ export class TeletoBackendStack extends cdk.Stack {
         PRIMARY_KEY: 'grouphash',
         REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
       },
+      role: executionLambdaRole,
     });
     const forceDeleteMembersLambdaId = DeleteMembersLambda.node.defaultChild as lambda.CfnFunction;
     forceDeleteMembersLambdaId.overrideLogicalId('DeleteMembersLambda');
@@ -119,6 +129,7 @@ export class TeletoBackendStack extends cdk.Stack {
         PRIMARY_KEY: 'grouphash',
         REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
       },
+      role: executionLambdaRole,
     });
     const forceGetTopicsLambdaId = GetTopicsLambda.node.defaultChild as lambda.CfnFunction;
     forceGetTopicsLambdaId.overrideLogicalId('GetTopicsLambda');
@@ -136,6 +147,7 @@ export class TeletoBackendStack extends cdk.Stack {
         TW_ACCESS_TOKEN_KEY: process.env.TW_ACCESS_TOKEN_KEY ? process.env.TW_ACCESS_TOKEN_KEY : '', // Access Token
         TW_ACCESS_TOKEN_SECRET: process.env.TW_ACCESS_TOKEN_SECRET ? process.env.TW_ACCESS_TOKEN_SECRET : '', // Access Token Secret
       },
+      role: executionLambdaRole,
     });
     const forceGetTrendsByTwitterLambda = GetTrendsByTwitterLambda.node.defaultChild as lambda.CfnFunction;
     forceGetTrendsByTwitterLambda.overrideLogicalId('GetTrendsByTwitterLambda');
