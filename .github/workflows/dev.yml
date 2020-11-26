@@ -50,6 +50,7 @@ jobs:
           AWS_DEFAULT_REGION: "us-east-1"
           AWS_ACCESS_KEY_ID: "${{ secrets.TELETO_BACKEND_AWS_ID }}"
           AWS_SECRET_ACCESS_KEY: "${{ secrets.TELETO_BACKEND_AWS_KEY }}"
+          AWS_ACCOUNT_ID: "${{ secrets.TELETO_BACKEND_AWS_ACCOUNT_ID }}"
 
       - name: CDK Deploy
         run: yarn cdk deploy --require-approval=never
