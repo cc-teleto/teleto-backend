@@ -72,7 +72,8 @@ export class TeletoBackendStack extends cdk.Stack {
     });
 
     // Lambda setup
-    const executionLambdaRole = iam.Role.fromRoleArn(this, 'Role', 'arn:aws:iam::624623207783:role/LambdaAccessToDynamoDB', {
+    const iamRole = "arn:aws:iam::" + process.env.ACCOUNT_ID + ":role/LambdaAccessToDynamoDB";
+    const executionLambdaRole = iam.Role.fromRoleArn(this, 'Role', iamRole, {
       // Set 'mutable' to 'false' to use the role as-is and prevent adding new
       // policies to it. The default is 'true', which means the role may be
       // modified as part of the deployment.
@@ -234,6 +235,6 @@ export function addCorsOptions(apiResource: apigateway.IResource) {
 
 const app = new cdk.App();
 new TeletoBackendStack(app, 'TeletoBackendStack', {
-  ApiStage: 'prod',
+  ApiStage:process.env.STAGE ? process.env.STAGE : 'prod'
 });
 app.synth();
