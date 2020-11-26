@@ -1,0 +1,29 @@
+name: Create API Document
+
+on:
+  push:
+    paths:
+      - "api/teletoAPI.yaml"
+
+jobs:
+  create_documents:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Download Swagger Codegen
+        run: wget https://repo1.maven.org/maven2/io/swagger/codegen/v3/swagger-codegen-cli/3.0.23/swagger-codegen-cli-3.0.23.jar -O swagger-codegen-cli.jar
+
+      - name: Convert file
+        run: java -jar swagger-codegen-cli.jar generate -i ./api/teletoAPI.yaml -l html2 -o APIDocumemts
+
+      - name: Deploy to S3
+        env:
+          AWS_ACCESS_KEY_ID: "${{ secrets.TELETO_BACKEND_AWS_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets.TELETO_BACKEND_AWS_KEY }}"
+        run: |
+          aws s3 cp \
+            --region us-east-2 \
+            ./APIDocumemts/index.html s3://teleto-page-dev/APIDocumemts/APIDocumemts.html
