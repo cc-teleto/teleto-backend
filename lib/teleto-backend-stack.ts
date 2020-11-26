@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/interface-name-prefix
 import apigateway = require('@aws-cdk/aws-apigateway');
 import dynamodb = require('@aws-cdk/aws-dynamodb');
 import lambda = require('@aws-cdk/aws-lambda');
@@ -17,7 +18,7 @@ export class TeletoBackendStack extends cdk.Stack {
     super(app, id);
 
     // DynamoDB setup
-    const dynamoTable = new dynamodb.Table(this, 'Teleto-members', {
+    const membersTable = new dynamodb.Table(this, 'Teleto-members', {
       partitionKey: {
         name: 'grouphash',
         type: dynamodb.AttributeType.STRING,
@@ -30,13 +31,52 @@ export class TeletoBackendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
     });
 
+    const topicsTable = new dynamodb.Table(this, 'Teleto-topics', {
+      partitionKey: {
+        name: 'hash',
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'category',
+        type: dynamodb.AttributeType.STRING,
+      },
+      tableName: 'Teleto-topics',
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
+    const optionsTable = new dynamodb.Table(this, 'Teleto-options', {
+      partitionKey: {
+        name: 'groupname',
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'word',
+        type: dynamodb.AttributeType.STRING,
+      },
+      tableName: 'Teleto-options',
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
+    const trendsTable = new dynamodb.Table(this, 'Teleto-trends-twitter', {
+      partitionKey: {
+        name: 'wogeid',
+        type: dynamodb.AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'name',
+        type: dynamodb.AttributeType.STRING,
+      },
+      tableName: 'Teleto-trends-twitter',
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
     // Lambda setup
     const GetMembersLambda = new lambda.Function(this, 'GetMembersLambda', {
       code: new AssetCode('src/getMembers'),
       handler: 'index.handler',
       runtime: lambda.Runtime.NODEJS_12_X,
       environment: {
-        TABLE_NAME: dynamoTable.tableName,
+        TABLE_NAME: membersTable.tableName,
         PRIMARY_KEY: 'grouphash',
         REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
       },
@@ -49,7 +89,7 @@ export class TeletoBackendStack extends cdk.Stack {
       handler: 'index.handler',
       runtime: lambda.Runtime.NODEJS_12_X,
       environment: {
-        TABLE_NAME: dynamoTable.tableName,
+        TABLE_NAME: membersTable.tableName,
         PRIMARY_KEY: 'grouphash',
         REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
       },
@@ -57,9 +97,37 @@ export class TeletoBackendStack extends cdk.Stack {
     const forcePostMembersLambdaId = PostMembersLambda.node.defaultChild as lambda.CfnFunction;
     forcePostMembersLambdaId.overrideLogicalId('PostMembersLambda');
 
+    const DeleteMembersLambda = new lambda.Function(this, 'DeleteMembersLambda', {
+      code: new AssetCode('src/deleteMember'),
+      handler: 'index.handler',
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: membersTable.tableName,
+        PRIMARY_KEY: 'grouphash',
+        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
+      },
+    });
+    const forceDeleteMembersLambdaId = DeleteMembersLambda.node.defaultChild as lambda.CfnFunction;
+    forceDeleteMembersLambdaId.overrideLogicalId('DeleteMembersLambda');
+
+    const GetTopicsLambda = new lambda.Function(this, 'GetTopicsLambda', {
+      code: new AssetCode('src/deleteMember'),
+      handler: 'index.handler',
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: topicsTable.tableName,
+        PRIMARY_KEY: 'grouphash',
+        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
+      },
+    });
+    const forceGetTopicsLambdaId = GetTopicsLambda.node.defaultChild as lambda.CfnFunction;
+    forceGetTopicsLambdaId.overrideLogicalId('GetTopicsLambda');
+
     // grant access
-    dynamoTable.grantFullAccess(GetMembersLambda);
-    dynamoTable.grantFullAccess(PostMembersLambda);
+    membersTable.grantFullAccess(GetMembersLambda);
+    membersTable.grantFullAccess(PostMembersLambda);
+    membersTable.grantFullAccess(DeleteMembersLambda);
+    membersTable.grantFullAccess(GetTopicsLambda);
 
     // API Gateway setup
     const ApiStage = new CfnParameter(this, 'ApiStage', {
