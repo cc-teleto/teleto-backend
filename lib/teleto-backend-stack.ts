@@ -73,7 +73,7 @@ export class TeletoBackendStack extends cdk.Stack {
 
     // Lambda setup
     const iamRole = "arn:aws:iam::" + process.env.ACCOUNT_ID + ":role/LambdaAccessToDynamoDB";
-    const executionLambdaRole = iam.Role.fromRoleArn(this, 'Role', iamRole, {
+    const executionLambdaRole = iam.Role.fromRoleArn(this, 'dynamoDBRole', iamRole, {
       // Set 'mutable' to 'false' to use the role as-is and prevent adding new
       // policies to it. The default is 'true', which means the role may be
       // modified as part of the deployment.
@@ -169,7 +169,7 @@ export class TeletoBackendStack extends cdk.Stack {
 
     //ApiRole取得
     const strApiRole = "arn:aws:iam::" + process.env.ACCOUNT_ID + ":role/apiRole";
-    const executionApiRole = iam.Role.fromRoleArn(this, 'Role', strApiRole, {
+    const executionApiRole = iam.Role.fromRoleArn(this, 'existingApiRole', strApiRole, {
       // Set 'mutable' to 'false' to use the role as-is and prevent adding new
       // policies to it. The default is 'true', which means the role may be
       // modified as part of the deployment.
