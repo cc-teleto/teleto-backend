@@ -175,8 +175,7 @@ export class TeletoBackendStack extends cdk.Stack {
       // modified as part of the deployment.
       mutable: false,
     });
-
-    if(typeof executionApiRole !== "undefined"){
+    if(typeof executionApiRole === "undefined"){
       const apiRole = new Role(this, 'apiRole', {
         roleName: 'apiRole',
         assumedBy: new ServicePrincipal('apigateway.amazonaws.com'),
@@ -246,6 +245,6 @@ export function addCorsOptions(apiResource: apigateway.IResource) {
 
 const app = new cdk.App();
 new TeletoBackendStack(app, 'TeletoBackendStack', {
-  ApiStage:process.env.STAGE ? process.env.STAGE : 'prod'
+  ApiStage: process.env.STAGE ? process.env.STAGE : 'prod'
 });
 app.synth();
