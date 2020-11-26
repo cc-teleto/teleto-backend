@@ -78,7 +78,7 @@ export class TeletoBackendStack extends cdk.Stack {
       environment: {
         TABLE_NAME: membersTable.tableName,
         PRIMARY_KEY: 'grouphash',
-        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
+        REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
       },
     });
     const forceGetMembersLambdaId = GetMembersLambda.node.defaultChild as lambda.CfnFunction;
@@ -91,7 +91,7 @@ export class TeletoBackendStack extends cdk.Stack {
       environment: {
         TABLE_NAME: membersTable.tableName,
         PRIMARY_KEY: 'grouphash',
-        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
+        REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
       },
     });
     const forcePostMembersLambdaId = PostMembersLambda.node.defaultChild as lambda.CfnFunction;
@@ -104,7 +104,7 @@ export class TeletoBackendStack extends cdk.Stack {
       environment: {
         TABLE_NAME: membersTable.tableName,
         PRIMARY_KEY: 'grouphash',
-        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
+        REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
       },
     });
     const forceDeleteMembersLambdaId = DeleteMembersLambda.node.defaultChild as lambda.CfnFunction;
@@ -117,7 +117,7 @@ export class TeletoBackendStack extends cdk.Stack {
       environment: {
         TABLE_NAME: topicsTable.tableName,
         PRIMARY_KEY: 'grouphash',
-        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
+        REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
       },
     });
     const forceGetTopicsLambdaId = GetTopicsLambda.node.defaultChild as lambda.CfnFunction;
@@ -128,9 +128,13 @@ export class TeletoBackendStack extends cdk.Stack {
       handler: 'index.handler',
       runtime: lambda.Runtime.NODEJS_12_X,
       environment: {
-        TABLE_NAME: topicsTable.tableName,
+        TABLE_NAME: trendsTable.tableName,
         PRIMARY_KEY: 'grouphash',
-        REGION: process.env.REGION ? process.env.REGION : 'ap-northeast-1',
+        REGION: process.env.AWS_REGION ? process.env.AWS_REGION : 'ap-northeast-1',
+        TW_CONSUMER_KEY: process.env.TW_CONSUMER_KEY ? process.env.TW_CONSUMER_KEY : '', // API Key
+        TW_CONSUMER_SECRET: process.env.TW_CONSUMER_SECRET ? process.env.TW_CONSUMER_SECRET : '', // API Secret Key
+        TW_ACCESS_TOKEN_KEY: process.env.TW_ACCESS_TOKEN_KEY ? process.env.TW_ACCESS_TOKEN_KEY : '', // Access Token
+        TW_ACCESS_TOKEN_SECRET: process.env.TW_ACCESS_TOKEN_SECRET ? process.env.TW_ACCESS_TOKEN_SECRET : '', // Access Token Secret
       },
     });
     const forceGetTrendsByTwitterLambda = GetTrendsByTwitterLambda.node.defaultChild as lambda.CfnFunction;

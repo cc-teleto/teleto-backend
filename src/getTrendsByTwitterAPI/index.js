@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 const dynamoDB = new AWS.DynamoDB.DocumentClient({
-  region: 'us-east-2', // DynamoDBのリージョン
+  region: process.env.REGION,
 });
 const Twitter = require('twitter');
 
