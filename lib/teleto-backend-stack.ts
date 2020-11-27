@@ -211,23 +211,8 @@ export class TeletoBackendStack extends cdk.Stack {
     });
     ApiStage.overrideLogicalId("ApiStage");
 
-    //ApiRole取得
-    const strApiRole =
-      "arn:aws:iam::" + process.env.AWS_ACCOUNT_ID + ":role/apiRole";
-    const executionApiRole = iam.Role.fromRoleArn(
-      this,
-      "existingApiRole",
-      strApiRole,
-      {
-        // Set 'mutable' to 'false' to use the role as-is and prevent adding new
-        // policies to it. The default is 'true', which means the role may be
-        // modified as part of the deployment.
-        mutable: false,
-      }
-    );
-
     const apiRole = new Role(this, "apiRole", {
-      roleName: "apiRole",
+      roleName: process.env.STAGE + "ApiRole",
       assumedBy: new ServicePrincipal("apigateway.amazonaws.com"),
     });
 
@@ -237,6 +222,19 @@ export class TeletoBackendStack extends cdk.Stack {
         actions: ["lambda:InvokeFunction"],
       })
     );
+
+    // // apiRoleを既存のものから取得
+    // const arnApiRole =
+    //   "arn:aws:iam::" +
+    //   process.env.AWS_ACCOUNT_ID +
+    //   ":role/aws-service-role/ops.apigateway.amazonaws.com/AWSServiceRoleForAPIGateway";
+    // const apiRole = iam.Role.fromRoleArn(this, "apiRole", arnApiRole, {
+    //   // Set 'mutable' to 'false' to use the role as-is and prevent adding new
+    //   // policies to it. The default is 'true', which means the role may be
+    //   // modified as part of the deployment.
+    //   mutable: false,
+    // });
+
     const forceApiRoleId = apiRole.node.defaultChild as CfnRole;
     forceApiRoleId.overrideLogicalId("apiRole");
 
