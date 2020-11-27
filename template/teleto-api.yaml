@@ -6,22 +6,22 @@ info:
 basePath:
   Fn::Sub: ${ApiStage}
 schemes:
-- "https"
+  - "https"
 paths:
   /members:
     get:
       produces:
-      - "application/json"
-      - "application/json(全取得)"
+        - "application/json"
+        - "application/json(全取得)"
       parameters:
-      - name: "grouphash"
-        in: "query"
-        required: false
-        type: "string"
-      - name: "random"
-        in: "query"
-        required: false
-        type: "string"
+        - name: "grouphash"
+          in: "query"
+          required: false
+          type: "string"
+        - name: "random"
+          in: "query"
+          required: false
+          type: "string"
       responses:
         200:
           description: "200 response"
@@ -47,16 +47,16 @@ paths:
         httpMethod: "POST"
         contentHandling: "CONVERT_TO_TEXT"
         type: "aws_proxy"
-        credentials: 
+        credentials:
           Fn::Sub: "${apiRole.Arn}"
     post:
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - name: "grouphash"
-        in: "query"
-        required: false
-        type: "string"
+        - name: "grouphash"
+          in: "query"
+          required: false
+          type: "string"
       responses:
         201:
           description: "201 response"
@@ -76,7 +76,7 @@ paths:
             Access-Control-Allow-Origin:
               type: "string"
       x-amazon-apigateway-integration:
-        uri: 
+        uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostMembersLambda.Arn}/invocations"
         responses:
           default:
@@ -87,20 +87,20 @@ paths:
         httpMethod: "POST"
         contentHandling: "CONVERT_TO_TEXT"
         type: "aws_proxy"
-        credentials: 
+        credentials:
           Fn::Sub: "${apiRole.Arn}"
     delete:
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - name: "memberhash"
-        in: "query"
-        required: false
-        type: "string"
-      - name: "grouphash"
-        in: "query"
-        required: false
-        type: "string"
+        - name: "memberhash"
+          in: "query"
+          required: false
+          type: "string"
+        - name: "grouphash"
+          in: "query"
+          required: false
+          type: "string"
       responses:
         200:
           description: "200 response"
@@ -117,7 +117,7 @@ paths:
             Access-Control-Allow-Origin:
               type: "string"
       x-amazon-apigateway-integration:
-        uri: 
+        uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${DeleteMembersLambda.Arn}/invocations"
         responses:
           default:
@@ -126,13 +126,13 @@ paths:
         httpMethod: "POST"
         contentHandling: "CONVERT_TO_TEXT"
         type: "aws_proxy"
-        credentials: 
+        credentials:
           Fn::Sub: "${apiRole.Arn}"
     options:
       consumes:
-      - "application/json"
+        - "application/json"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "200 response"
@@ -154,26 +154,26 @@ paths:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+          application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
   /topics:
     get:
       produces:
-      - "application/json"
+        - "application/json"
       parameters:
-      - name: "category"
-        in: "query"
-        required: false
-        type: "string"
-      - name: "grouphash"
-        in: "query"
-        required: false
-        type: "string"
-      - name: "random"
-        in: "query"
-        required: false
-        type: "string"
+        - name: "category"
+          in: "query"
+          required: false
+          type: "string"
+        - name: "grouphash"
+          in: "query"
+          required: false
+          type: "string"
+        - name: "random"
+          in: "query"
+          required: false
+          type: "string"
       responses:
         200:
           description: "200 response"
@@ -183,7 +183,7 @@ paths:
             Access-Control-Allow-Origin:
               type: "string"
       x-amazon-apigateway-integration:
-        uri: 
+        uri:
           Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetTopicsLambda.Arn}/invocations"
         responses:
           default:
@@ -194,13 +194,13 @@ paths:
         httpMethod: "POST"
         contentHandling: "CONVERT_TO_TEXT"
         type: "aws_proxy"
-        credentials: 
+        credentials:
           Fn::Sub: "${apiRole.Arn}"
     options:
       consumes:
-      - "application/json"
+        - "application/json"
       produces:
-      - "application/json"
+        - "application/json"
       responses:
         200:
           description: "200 response"
@@ -222,7 +222,7 @@ paths:
               method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
               method.response.header.Access-Control-Allow-Origin: "'*'"
         requestTemplates:
-          application/json: "{\"statusCode\": 200}"
+          application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
 definitions:
