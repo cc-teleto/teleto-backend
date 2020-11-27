@@ -3,26 +3,26 @@ info:
   title: "teleto API"
   version: "2020-11-25T06:06:04Z"
 servers:
-- url: "https://ttnxcty7yc.execute-api.us-east-2.amazonaws.com/{basePath}"
-  variables:
-    basePath:
-      default: "/stage"
+  - url: "https://ttnxcty7yc.execute-api.us-east-2.amazonaws.com/{basePath}"
+    variables:
+      basePath:
+        default: "/stage"
 paths:
   /topics:
     get:
       parameters:
-      - name: "category"
-        in: "query"
-        schema:
-          type: "string"
-      - name: "grouphash"
-        in: "query"
-        schema:
-          type: "string"
-      - name: "random"
-        in: "query"
-        schema:
-          type: "string"
+        - name: "category"
+          in: "query"
+          schema:
+            type: "string"
+        - name: "grouphash"
+          in: "query"
+          schema:
+            type: "string"
+        - name: "random"
+          in: "query"
+          schema:
+            type: "string"
       responses:
         200:
           description: "200 response"
@@ -55,14 +55,14 @@ paths:
   /members:
     get:
       parameters:
-      - name: "grouphash"
-        in: "query"
-        schema:
-          type: "string"
-      - name: "random"
-        in: "query"
-        schema:
-          type: "string"
+        - name: "grouphash"
+          in: "query"
+          schema:
+            type: "string"
+        - name: "random"
+          in: "query"
+          schema:
+            type: "string"
       responses:
         400:
           description: "400 response"
@@ -86,10 +86,10 @@ paths:
                 $ref: "#/components/schemas/getAllMembers"
     post:
       parameters:
-      - name: "grouphash"
-        in: "query"
-        schema:
-          type: "string"
+        - name: "grouphash"
+          in: "query"
+          schema:
+            type: "string"
       responses:
         401:
           description: "401 response"
@@ -117,14 +117,14 @@ paths:
                 $ref: "#/components/schemas/postMembers"
     delete:
       parameters:
-      - name: "memberhash"
-        in: "query"
-        schema:
-          type: "string"
-      - name: "grouphash"
-        in: "query"
-        schema:
-          type: "string"
+        - name: "memberhash"
+          in: "query"
+          schema:
+            type: "string"
+        - name: "grouphash"
+          in: "query"
+          schema:
+            type: "string"
       responses:
         200:
           description: "200 response"
@@ -164,6 +164,33 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Empty"
+  /roulette:
+    get:
+      # parameters:
+      # - name: "grouphash"
+      #   in: "query"
+      #   schema:
+      #     type: "string"
+      # - name: "random"
+      #   in: "query"
+      #   schema:
+      #     type: "string"
+      responses:
+        400:
+          description: "400 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content: {}
+        200:
+          description: "200 response"
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: "string"
+          content: {}
+
 components:
   schemas:
     Empty:

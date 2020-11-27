@@ -148,6 +148,7 @@ export class TeletoBackendStack extends cdk.Stack {
     forceDeleteMembersLambdaId.overrideLogicalId("DeleteMembersLambda");
 
     const GetTopicsLambda = new lambda.Function(this, "GetTopicsLambda", {
+      // TODO:DeleteMemberから修正
       code: new AssetCode("src/deleteMember"),
       handler: "index.handler",
       runtime: lambda.Runtime.NODEJS_12_X,
