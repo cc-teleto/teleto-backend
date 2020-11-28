@@ -42,10 +42,6 @@ export class TeletoBackendStack extends cdk.Stack {
         name: "hash",
         type: dynamodb.AttributeType.STRING,
       },
-      sortKey: {
-        name: "category",
-        type: dynamodb.AttributeType.STRING,
-      },
       tableName: "Teleto-topics",
       removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
     });
@@ -66,13 +62,26 @@ export class TeletoBackendStack extends cdk.Stack {
     const trendsTable = new dynamodb.Table(this, "Teleto-trends-twitter", {
       partitionKey: {
         name: "wogeid",
-        type: dynamodb.AttributeType.STRING,
+        type: dynamodb.AttributeType.NUMBER,
       },
       sortKey: {
         name: "name",
         type: dynamodb.AttributeType.STRING,
       },
       tableName: "Teleto-trends-twitter",
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
+    const oldTrendsTable = new dynamodb.Table(this, "Teleto-trends", {
+      partitionKey: {
+        name: "wogeid",
+        type: dynamodb.AttributeType.NUMBER,
+      },
+      sortKey: {
+        name: "timestamp",
+        type: dynamodb.AttributeType.STRING,
+      },
+      tableName: "Teleto-trends",
       removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
     });
 
@@ -148,6 +157,7 @@ export class TeletoBackendStack extends cdk.Stack {
     forceDeleteMembersLambdaId.overrideLogicalId("DeleteMembersLambda");
 
     const GetTopicsLambda = new lambda.Function(this, "GetTopicsLambda", {
+      // TODO:DeleteMemberから修正
       code: new AssetCode("src/deleteMember"),
       handler: "index.handler",
       runtime: lambda.Runtime.NODEJS_12_X,

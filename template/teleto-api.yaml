@@ -225,6 +225,49 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
+
+  /roulette:
+    get:
+      produces:
+        - "application/json"
+        - "application/json(全取得)"
+      parameters:
+        - name: "grouphash"
+          in: "query"
+          required: false
+          type: "string"
+        - name: "random"
+          in: "query"
+          required: false
+          type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/getAllMembers"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+        400:
+          description: "400 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetMembersLambda.Arn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+        credentials:
+          Fn::Sub: "${apiRole.Arn}"
+
 definitions:
   Empty:
     type: "object"
