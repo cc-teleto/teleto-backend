@@ -421,8 +421,7 @@ definitions:
       grouphash:
         type: "string"
     title: "postRoomModel"
-
-    x-amazon-apigateway-gateway-responses:
+x-amazon-apigateway-gateway-responses:
   DEFAULT_4XX:
     responseParameters:
       gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
