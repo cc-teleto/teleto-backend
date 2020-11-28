@@ -275,7 +275,7 @@ paths:
       parameters:
         - name: "grouphash"
           in: "query"
-          required: false
+          required: true
           type: "string"
       responses:
         200:
@@ -292,7 +292,7 @@ paths:
               type: "string"
       x-amazon-apigateway-integration:
         uri:
-          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetMembersLambda.Arn}/invocations"
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetRoomLambda.Arn}/invocations"
         responses:
           default:
             statusCode: "200"
@@ -304,7 +304,54 @@ paths:
         type: "aws_proxy"
         credentials:
           Fn::Sub: "${apiRole.Arn}"  
-
+    post:
+      produces:
+        - "application/json"
+      parameters:
+        - name: "members"
+          in: "query"
+          required: true
+          type: "array"
+        - name: "endPeriod"
+          in: "query"
+          required: true
+          type: "string"
+        - name: "category"
+          in: "query"
+          required: true
+          type: "string"
+      responses:
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/postRoom"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+        401:
+          description: "401 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+        402:
+          description: "402 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+      x-amazon-apigateway-integration:
+        uri:
+          Fn::Sub: "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostRoomLambda.Arn}/invocations"
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+        credentials:
+          Fn::Sub: "${apiRole.Arn}"
 definitions:
   Empty:
     type: "object"
@@ -365,10 +412,17 @@ definitions:
         type: "string"
       rouletteStopAt:
         type: "number"
-      onwhichScreen:
+      onWhichScreen:
         type: "string"
     title: "getRoomProperty"
-x-amazon-apigateway-gateway-responses:
+  postRoom:
+    type: "object"
+    properties:
+      grouphash:
+        type: "string"
+    title: "postRoomModel"
+
+    x-amazon-apigateway-gateway-responses:
   DEFAULT_4XX:
     responseParameters:
       gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
