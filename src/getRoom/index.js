@@ -40,7 +40,7 @@ exports.handler = async (event) => {
     };
     let roomsResultJSON = await documentClient.query(roomsParams).promise();
 
-    result = { ...membersResultJSON.Items, ...roomsResultJSON };
+    result = { members: membersResultJSON.Items, ...roomsResultJSON.Items[0] };
     response.body = JSON.stringify(result);
 
     return response;
