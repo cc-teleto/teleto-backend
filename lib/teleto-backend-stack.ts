@@ -218,8 +218,8 @@ export class TeletoBackendStack extends cdk.Stack {
     forceGetTrendsByTwitterLambda.overrideLogicalId("GetTrendsByTwitterLambda");
 
     // WebSocket用Lambdaを構築
-    const OnConnectionLambda = new lambda.Function(this, "OnConnectionLambda", {
-      code: new AssetCode("src/onConnection"),
+    const OnConnectLambda = new lambda.Function(this, "OnConnectLambda", {
+      code: new AssetCode("src/onConnect"),
       handler: "index.handler",
       runtime: lambda.Runtime.NODEJS_12_X,
       environment: {
@@ -230,9 +230,41 @@ export class TeletoBackendStack extends cdk.Stack {
       },
       role: executionLambdaRole,
     });
-    const forceOnConnectionLambdaId = OnConnectionLambda.node
+    const forceOnConnectLambdaId = OnConnectLambda.node
       .defaultChild as lambda.CfnFunction;
-    forceOnConnectionLambdaId.overrideLogicalId("OnConnectionLambda");
+    forceOnConnectLambdaId.overrideLogicalId("OnConnectLambda");
+
+    const OnDisconnectLambda = new lambda.Function(this, "OnDisconnectLambda", {
+      code: new AssetCode("src/onDisconnect"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: connectionsTable.tableName,
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceOnDisconnectLambdaId = OnDisconnectLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceOnDisconnectLambdaId.overrideLogicalId("OnDisconnectLambda");
+
+    const SendMessageLambda = new lambda.Function(this, "SendMessageLambda", {
+      code: new AssetCode("src/sendMessage"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: connectionsTable.tableName,
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceSendMessageLambdaId = SendMessageLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceSendMessageLambdaId.overrideLogicalId("SendMessageLambda");
 
     // grant access
     membersTable.grantFullAccess(GetMembersLambda);
