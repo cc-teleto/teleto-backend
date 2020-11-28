@@ -22,7 +22,6 @@ exports.handler = async (event) => {
   // }
   let selectedConnectionId = event.requestContext.connectionId;
   let preData;
-  }
   try {
     preData = await ddb
       .getItem({ TableName: TABLE_NAME, Key: {connectionid: selectedConnectionId}})
