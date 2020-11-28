@@ -7,7 +7,7 @@
     "regent0ro <ykang587@gmail.com>",	
     "KaikiYuasa <yuasa.kshu@gmail.com>",	
     "orchid69 <lake.john719@gmail.com>",	
-    "krkettle <catrarazou@gmail.com>"	
+    "krkettle <catrarazou@gmail.com>"
   ],	
   "license": "MIT",
   "bin": {
@@ -18,7 +18,8 @@
     "build.with.swagger": "npm run build && chmod +x ./createSwagger.sh && ./createSwagger.sh",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deploy": "tsc && cdk deploy --profile cc-teleto"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.74.0",

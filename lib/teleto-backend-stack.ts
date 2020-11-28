@@ -85,6 +85,16 @@ export class TeletoBackendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
     });
 
+    // WebSocket通信のコネクションIDを管理するためのテーブル
+    const connectionsTable = new dynamodb.Table(this, "Teleto-connections", {
+      partitionKey: {
+        name: "connectionid",
+        type: dynamodb.AttributeType.STRING,
+      },
+      tableName: "Teleto-connections",
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
     // Lambda setup
     const iamRole =
       "arn:aws:iam::" +
@@ -207,6 +217,55 @@ export class TeletoBackendStack extends cdk.Stack {
       .defaultChild as lambda.CfnFunction;
     forceGetTrendsByTwitterLambda.overrideLogicalId("GetTrendsByTwitterLambda");
 
+    // WebSocket用Lambdaを構築
+    const OnConnectLambda = new lambda.Function(this, "OnConnectLambda", {
+      code: new AssetCode("src/onConnect"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: connectionsTable.tableName,
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceOnConnectLambdaId = OnConnectLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceOnConnectLambdaId.overrideLogicalId("OnConnectLambda");
+
+    const OnDisconnectLambda = new lambda.Function(this, "OnDisconnectLambda", {
+      code: new AssetCode("src/onDisconnect"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: connectionsTable.tableName,
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceOnDisconnectLambdaId = OnDisconnectLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceOnDisconnectLambdaId.overrideLogicalId("OnDisconnectLambda");
+
+    const SendMessageLambda = new lambda.Function(this, "SendMessageLambda", {
+      code: new AssetCode("src/sendMessage"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        TABLE_NAME: connectionsTable.tableName,
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceSendMessageLambdaId = SendMessageLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceSendMessageLambdaId.overrideLogicalId("SendMessageLambda");
+
     // grant access
     membersTable.grantFullAccess(GetMembersLambda);
     membersTable.grantFullAccess(PostMembersLambda);
@@ -232,18 +291,6 @@ export class TeletoBackendStack extends cdk.Stack {
         actions: ["lambda:InvokeFunction"],
       })
     );
-
-    // // apiRoleを既存のものから取得
-    // const arnApiRole =
-    //   "arn:aws:iam::" +
-    //   process.env.AWS_ACCOUNT_ID +
-    //   ":role/aws-service-role/ops.apigateway.amazonaws.com/AWSServiceRoleForAPIGateway";
-    // const apiRole = iam.Role.fromRoleArn(this, "apiRole", arnApiRole, {
-    //   // Set 'mutable' to 'false' to use the role as-is and prevent adding new
-    //   // policies to it. The default is 'true', which means the role may be
-    //   // modified as part of the deployment.
-    //   mutable: false,
-    // });
 
     const forceApiRoleId = apiRole.node.defaultChild as CfnRole;
     forceApiRoleId.overrideLogicalId("apiRole");
