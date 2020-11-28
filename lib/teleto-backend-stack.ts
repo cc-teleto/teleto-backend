@@ -85,6 +85,16 @@ export class TeletoBackendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
     });
 
+    // WebSocket通信のコネクションIDを管理するためのテーブル
+    const connectionsTable = new dynamodb.Table(this, "Teleto-connections", {
+      partitionKey: {
+        name: "connectionid",
+        type: dynamodb.AttributeType.STRING,
+      },
+      tableName: "Teleto-connections",
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
     // Lambda setup
     const iamRole =
       "arn:aws:iam::" +
