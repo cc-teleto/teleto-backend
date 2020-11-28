@@ -57,7 +57,7 @@ exports.handler = async (event) => {
       return response;
     } else {
       response.statusCode = 401;
-      response.body = 'gloup hash is not assigned.';
+      response.body = 'group hash is not assigned.';
       return response;
     }
   } catch (e) {
