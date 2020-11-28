@@ -7,7 +7,7 @@
     "regent0ro <ykang587@gmail.com>",	
     "KaikiYuasa <yuasa.kshu@gmail.com>",	
     "orchid69 <lake.john719@gmail.com>",	
-    "krkettle <catrarazou@gmail.com>"	
+    "krkettle <catrarazou@gmail.com>"
   ],	
   "license": "MIT",
   "bin": {
@@ -19,7 +19,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "deploy": "cdk deploy --profile cc-teleto"
+    "deploy": "tsc && cdk deploy --profile cc-teleto"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.74.0",
