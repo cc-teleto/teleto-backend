@@ -13,13 +13,41 @@ const TABLE_NAME = process.env.TABLE_NAME;
 exports.handler = async (event) => {
   let connectionData;
 
+  // try {
+  //   connectionData = await ddb
+  //     .scan({ TableName: TABLE_NAME, ProjectionExpression: "connectionid" })
+  //     .promise();
+  // } catch (e) {
+  //   return { statusCode: 500, body: e.stack };
+  // }
+  let selectedConnectionId = event.requestContext.connectionId;
+  let preData;
+  }
+  try {
+    preData = await ddb
+      .getItem({ TableName: TABLE_NAME, Key: {connectionid: selectedConnectionId}})
+      .promise();
+  } catch (e) {
+    return {statusCode: 500,body: e.stack };
+  }
+  console.log("preData"+preData);
+
+  let selectedGrouphash = preData.grouphash;
+  let params = {
+    TableName: TABLE_NAME,
+    FilterExpression: "grouphash = :s",
+    ExpressionAttributeValues: {
+      ":s": selectedGrouphash
+    }
+  }
   try {
     connectionData = await ddb
-      .scan({ TableName: TABLE_NAME, ProjectionExpression: "connectionid" })
+      .scan(params)
       .promise();
   } catch (e) {
     return { statusCode: 500, body: e.stack };
   }
+  console.log("connectionData"+connectionData);
 
   const apigwManagementApi = new AWS.ApiGatewayManagementApi({
     apiVersion: "2018-11-29",
