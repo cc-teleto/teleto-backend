@@ -226,12 +226,11 @@ export class TeletoBackendStack extends cdk.Stack {
       .defaultChild as lambda.CfnFunction;
     forceGetTrendsByTwitterLambda.overrideLogicalId("GetTrendsByTwitterLambda");
 
-    const PostRoomsLambda = new lambda.Function(this, "PostRoomsLambda", {
-      code: new AssetCode("src/postRooms"),
+    const PostRoomLambda = new lambda.Function(this, "PostRoomLambda", {
+      code: new AssetCode("src/postRoom"),
       handler: "index.handler",
       runtime: lambda.Runtime.NODEJS_12_X,
       environment: {
-        // TODO set Rooms Table Name
         ROOMS_TABLE_NAME: roomsTable.tableName,
         MEMBERS_TABLE_NAME: membersTable.tableName,
         PRIMARY_KEY: "grouphash",
@@ -241,9 +240,27 @@ export class TeletoBackendStack extends cdk.Stack {
       },
       role: executionLambdaRole,
     });
-    const forcePostRoomsLambdaId = PostRoomsLambda.node
+    const forcePostRoomLambdaId = PostRoomLambda.node
       .defaultChild as lambda.CfnFunction;
-      forcePostRoomsLambdaId.overrideLogicalId("PostRoomsLambda");
+    forcePostRoomLambdaId.overrideLogicalId("PostRoomLambda");
+
+    const GetRoomLambda = new lambda.Function(this, "GetRoomLambda", {
+      code: new AssetCode("src/getRoom"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        ROOMS_TABLE_NAME: roomsTable.tableName,
+        MEMBERS_TABLE_NAME: membersTable.tableName,
+        PRIMARY_KEY: "grouphash",
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceGetRoomLambdaId = GetRoomLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceGetRoomLambdaId.overrideLogicalId("GetRoomLambda");
 
     // WebSocket用Lambdaを構築
     const OnConnectLambda = new lambda.Function(this, "OnConnectLambda", {
