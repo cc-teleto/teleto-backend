@@ -217,6 +217,25 @@ export class TeletoBackendStack extends cdk.Stack {
       .defaultChild as lambda.CfnFunction;
     forceGetTrendsByTwitterLambda.overrideLogicalId("GetTrendsByTwitterLambda");
 
+    const PostRoomsLambda = new lambda.Function(this, "PostRoomsLambda", {
+      code: new AssetCode("src/postRooms"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        // TODO set Rooms Table Name
+        ROOMS_TABLE_NAME: roomsTable.tableName,
+        MEMBERS_TABLE_NAME: membersTable.tableName,
+        PRIMARY_KEY: "grouphash",
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forcePostRoomsLambdaId = PostRoomsLambda.node
+      .defaultChild as lambda.CfnFunction;
+      forcePostRoomsLambdaId.overrideLogicalId("PostRoomsLambda");
+
     // WebSocket用Lambdaを構築
     const OnConnectLambda = new lambda.Function(this, "OnConnectLambda", {
       code: new AssetCode("src/onConnect"),
