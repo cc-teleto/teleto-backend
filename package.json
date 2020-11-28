@@ -18,7 +18,8 @@
     "build.with.swagger": "npm run build && chmod +x ./createSwagger.sh && ./createSwagger.sh",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "deploy": "cdk deploy --profile cc-teleto"
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.74.0",
