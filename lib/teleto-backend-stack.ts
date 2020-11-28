@@ -88,7 +88,7 @@ export class TeletoBackendStack extends cdk.Stack {
     // WebSocket通信のコネクションIDを管理するためのテーブル
     const connectionsTable = new dynamodb.Table(this, "Teleto-connections", {
       partitionKey: {
-        name: "connectionid",
+        name: "connectionId",
         type: dynamodb.AttributeType.STRING,
       },
       tableName: "Teleto-connections",
