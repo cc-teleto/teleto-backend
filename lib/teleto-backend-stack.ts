@@ -95,6 +95,15 @@ export class TeletoBackendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
     });
 
+    const roomsTable = new dynamodb.Table(this, "Teleto-rooms", {
+      partitionKey: {
+        name: "grouphash",
+        type: dynamodb.AttributeType.STRING,
+      },
+      tableName: "Teleto-rooms",
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
     // Lambda setup
     const iamRole =
       "arn:aws:iam::" +
@@ -216,6 +225,42 @@ export class TeletoBackendStack extends cdk.Stack {
     const forceGetTrendsByTwitterLambda = GetTrendsByTwitterLambda.node
       .defaultChild as lambda.CfnFunction;
     forceGetTrendsByTwitterLambda.overrideLogicalId("GetTrendsByTwitterLambda");
+
+    const PostRoomLambda = new lambda.Function(this, "PostRoomLambda", {
+      code: new AssetCode("src/postRoom"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        ROOMS_TABLE_NAME: roomsTable.tableName,
+        MEMBERS_TABLE_NAME: membersTable.tableName,
+        PRIMARY_KEY: "grouphash",
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forcePostRoomLambdaId = PostRoomLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forcePostRoomLambdaId.overrideLogicalId("PostRoomLambda");
+
+    const GetRoomLambda = new lambda.Function(this, "GetRoomLambda", {
+      code: new AssetCode("src/getRoom"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        ROOMS_TABLE_NAME: roomsTable.tableName,
+        MEMBERS_TABLE_NAME: membersTable.tableName,
+        PRIMARY_KEY: "grouphash",
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceGetRoomLambdaId = GetRoomLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceGetRoomLambdaId.overrideLogicalId("GetRoomLambda");
 
     // WebSocket用Lambdaを構築
     const OnConnectLambda = new lambda.Function(this, "OnConnectLambda", {

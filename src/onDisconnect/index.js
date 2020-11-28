@@ -18,7 +18,7 @@ exports.handler = async (event) => {
   const deleteParams = {
     TableName: process.env.TABLE_NAME,
     Key: {
-      connectionId: event.requestContext.connectionId,
+      connectionid: event.requestContext.connectionId,
     },
   };
 
