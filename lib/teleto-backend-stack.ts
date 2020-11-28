@@ -95,6 +95,15 @@ export class TeletoBackendStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
     });
 
+    const roomsTable = new dynamodb.Table(this, "Teleto-rooms", {
+      partitionKey: {
+        name: "grouphash",
+        type: dynamodb.AttributeType.STRING,
+      },
+      tableName: "Teleto-rooms",
+      removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
+    });
+
     // Lambda setup
     const iamRole =
       "arn:aws:iam::" +
