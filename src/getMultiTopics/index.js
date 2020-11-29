@@ -9,7 +9,7 @@ const ddb = new AWS.DynamoDB.DocumentClient({
 });
 
 const CONNECTIONS_TABLE_NAME = process.env.CONNECTIONS_TABLE_NAME;
-const ROOMS_TABLE_NAME = process.env.ROOMS_TABLE_NAME;
+const TOPICS_TABLE_NAME = process.env.TOPICS_TABLE_NAME;
 
 exports.handler = async (event) => {
   const connectionid = event.requestContext.connectionId;
@@ -92,7 +92,11 @@ exports.handler = async (event) => {
     topicsData.Items[value].topic.template = string;
     selectedTopics.push(topicsData.Items[value].topic.template);
   });
-
+  const apigwManagementApi = new AWS.ApiGatewayManagementApi({
+    apiVersion: "2018-11-29",
+    endpoint:
+      event.requestContext.domainName + "/" + event.requestContext.stage,
+  });
 
   const postData = selectedTopics;
   const postCalls = groupData.Items.map(async ({ connectionid }) => {
