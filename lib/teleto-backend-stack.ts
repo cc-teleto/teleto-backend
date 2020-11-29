@@ -337,6 +337,7 @@ export class TeletoBackendStack extends cdk.Stack {
         environment: {
           CONNECTIONS_TABLE_NAME: connectionsTable.tableName,
           TOPICS_TABLE_NAME: topicsTable.tableName,
+          ROOMS_TABLE_NAME: roomsTable.tableName,
           REGION: process.env.AWS_REGION
             ? process.env.AWS_REGION
             : "ap-northeast-1",
