@@ -135,8 +135,13 @@ exports.handler = async (event) => {
     }
     let string = eval("`" + topicsData.Items[value].topic.template + "`");
     console.log("string" + string);
+    let keyword = eval("`" + topicsData.Items[value].keyword + "`");
+    console.log("keyword" + keyword);
     topicsData.Items[value].topic.template = string;
-    selectedTopics.push(topicsData.Items[value].topic.template);
+    selectedTopics.push({
+      topic: topicsData.Items[value].topic.template,
+      keyword,
+    });
   }
   console.log("finish db");
   const apigwManagementApi = new AWS.ApiGatewayManagementApi({
