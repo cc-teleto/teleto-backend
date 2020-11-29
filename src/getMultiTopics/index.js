@@ -72,7 +72,7 @@ exports.handler = async (event) => {
   // Generate random angle
   const arr = [];
   const selectedTopics = [];
-  for (let k=0;k<topicsData["COUNT"];k++) {
+  for (let k=0;k<topicsData.Count;k++) {
       arr.push(k);
   }
   console.log("COUNT"+arr);
@@ -87,8 +87,14 @@ exports.handler = async (event) => {
   console.log("COUNT"+arr);
   arr = arr.slice(0,num);
   
+  arr.forEach((value) => {
+    let string = eval("`" + topicsData.Items[value].topic.template + "`");
+    topicsData.Items[value].topic.template = string;
+    selectedTopics.push(topicsData.Items[value].topic.template);
+  });
 
-  const postData = randomAngle;
+
+  const postData = selectedTopics;
   const postCalls = groupData.Items.map(async ({ connectionid }) => {
       try {
       await apigwManagementApi
@@ -107,43 +113,13 @@ exports.handler = async (event) => {
       } else {
           throw e;
       }
-  }
-    
+    }
+  });    
 
-try {
+  try {
       await Promise.all(postCalls);
-    } catch (e) {
+  } catch (e) {
       console.log("error in post api Promise.all: " + e);
       return { statusCode: 500, body: e.stack };
-    }
-
-    // Update Room Status in DB
-    const updateRouletteStatus = "Spinning";
-    const updateRouletteStopAt = randomAngle;
-    let updatedRoomData;
-    let updateRoomParams = {
-      TableName: ROOMS_TABLE_NAME,
-      Key: {
-        grouphash: grouphash,
-      },
-      UpdateExpression: "set rouletteStatus = :s, rouletteStopAt = :a",
-      ExpressionAttributeValues: {
-        ":s": updateRouletteStatus,
-        ":a": updateRouletteStopAt,
-      },
-      ReturnValues: "UPDATED_NEW",
-    };
-    try {
-      updatedRoomData = await ddb.update(updateRoomParams).promise();
-      console.log("updatedRoomData: " + JSON.stringify(updatedRoomData));
-    } catch (e) {
-      console.log("error in roomData Update: " + e);
-      return { statusCode: 500, body: e.stack };
-    }
-
-    return { statusCode: 200, body: "Data sent." };
-  } else {
-    console.log("Roulette should not be started.");
-    return { statusCode: 200, body: "No action required." };
   }
 };
