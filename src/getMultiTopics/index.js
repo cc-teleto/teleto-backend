@@ -13,10 +13,10 @@ const TOPICS_TABLE_NAME = process.env.TOPICS_TABLE_NAME;
 const ROOMS_TABLE_NAME = process.env.ROOMS_TABLE_NAME;
 
 exports.handler = async (event) => {
-  const connectionid = event.requestContext.connectionId;
+  const myConnectionid = event.requestContext.connectionId;
   const category = JSON.parse(event.body).category;
   const num = JSON.parse(event.body).num;
-  console.log("connection id: " + connectionid);
+  console.log("connection id: " + myConnectionid);
   // Query GroupHash
   let connectionData;
   let connectionDataParams = {
@@ -26,7 +26,7 @@ exports.handler = async (event) => {
       "#c": "connectionid",
     },
     ExpressionAttributeValues: {
-      ":connid": connectionid,
+      ":connid": myConnectionid,
     },
   };
   try {
@@ -176,8 +176,10 @@ exports.handler = async (event) => {
         grouphash: grouphash,
       },
       UpdateExpression: "set topics = :t",
+      ConditionExpression: "topics = :n",
       ExpressionAttributeValues: {
         ":t": selectedTopics,
+        ":n": null,
       },
       ReturnValues: "UPDATED_NEW",
     };
@@ -185,12 +187,14 @@ exports.handler = async (event) => {
       updatedRoomData = await ddb.update(updateRoomParams).promise();
       console.log("updatedRoomData: " + JSON.stringify(updatedRoomData));
     } catch (e) {
+      roomData = await ddb.query(roomDataParams).promise();
       console.log("error in roomData Update: " + e);
-      return { statusCode: 500, body: e.stack };
+      console.log("error in roomData Update(roomData): " + roomData);
+      selectedTopics = roomData.Items[0].topics;
     }
   } else {
     console.log("roomData.topics is not null");
-    selectedTopics = roomData.topics;
+    selectedTopics = roomData.Items[0].topics;
   }
 
   const apigwManagementApi = new AWS.ApiGatewayManagementApi({
@@ -206,9 +210,11 @@ exports.handler = async (event) => {
   console.log("postData" + postData);
   const postCalls = groupData.Items.map(async ({ connectionid }) => {
     try {
+      if(myConnectionid === connectionid){
       await apigwManagementApi
         .postToConnection({ ConnectionId: connectionid, Data: postData })
         .promise();
+      }
     } catch (e) {
       console.log("error in post api: " + e);
       if (e.statusCode === 410) {
