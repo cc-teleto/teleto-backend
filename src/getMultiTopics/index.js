@@ -58,7 +58,6 @@ exports.handler = async (event) => {
   let topicsData;
   let topicsDataParams = {
     TableName: TOPICS_TABLE_NAME,
-    Key: hash
   };
   try {
     topicsData = await ddb.scan(topicsDataParams).promise();
@@ -68,103 +67,112 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: e.stack };
   }
 
-  
   // Generate random angle
   const arr = [];
   const selectedTopics = [];
-  for (let k=0;k<topicsData.Count;k++) {
-      arr.push(k);
+  for (let k = 0; k < topicsData.Count; k++) {
+    arr.push(k);
   }
-  console.log("COUNT"+arr);
+  console.log("COUNT" + arr);
   let a = arr.length;
 
-  while(a) {
-      let j = Math.floor(Math.random() * a);
-      let t = arr[--a];
-      arr[a] = arr[j];
-      arr[j] = t;
+  while (a) {
+    let j = Math.floor(Math.random() * a);
+    let t = arr[--a];
+    arr[a] = arr[j];
+    arr[j] = t;
   }
-  console.log("COUNT"+arr);
-  arr = arr.slice(0,num);
-  
-  arr.forEach((value) => {
+  console.log("COUNT" + arr);
+  const selectedArr = arr.slice(0, num);
+  let opt = [];
+  for (let value of selectedArr) {
+    //selectedArr.forEach(async(value) => {
     for (let i = 0; i < topicsData.Items[value].topic.option.length; i++) {
-        if (topicsData.Items[value].topic.option[i] === "members") {
-          params = {
-            TableName: "Teleto-members",
-            ExpressionAttributeNames: { "#x": "grouphash" },
-            ExpressionAttributeValues: {
-              ":y": event.queryStringParameters["grouphash"],
-            },
-            KeyConditionExpression: "#x = :y",
-          };
-          let resultMember = "";
-          resultJSON = await documentClient.query(params).promise();
-          random = Math.floor(Math.random() * resultJSON.Count);
+      if (topicsData.Items[value].topic.option[i] === "members") {
+        params = {
+          TableName: "Teleto-members",
+          //ExpressionAttributeNames: { "#x": "grouphash" },
+          ExpressionAttributeValues: {
+            ":y": grouphash,
+          },
+          KeyConditionExpression: "grouphash = :y",
+        };
+        let resultMember = "";
+        resultJSON = await ddb.query(params).promise();
+        console.log("memberquery" + JSON.stringify(resultJSON));
+        random = Math.floor(Math.random() * resultJSON.Count);
 
-          resultMember = [resultJSON.Items[random]];
-          opt[i] = resultMember[0].membername;
-        } else if (topicsData.Items[value].topic.option[i] === "trends.twitter") {
-          params = {
-            TableName: "Teleto-trends-twitter",
-          };
-          let resultTrend = "";
-          resultJSON = await documentClient.scan(params).promise();
-          random = Math.floor(Math.random() * resultJSON.Count);
+        resultMember = [resultJSON.Items[random]];
+        opt[i] = resultMember[0].membername;
+      } else if (topicsData.Items[value].topic.option[i] === "trends.twitter") {
+        params = {
+          TableName: "Teleto-trends-twitter",
+        };
+        let resultTrend = "";
+        resultJSON = await ddb.scan(params).promise();
+        console.log("trendquery" + JSON.stringify(resultJSON));
+        random = Math.floor(Math.random() * resultJSON.Count);
 
-          resultTrend = [resultJSON.Items[random]];
-          opt[i] = resultTrend[0].name;
-        } else {
-          params = {
-            TableName: "Teleto-options",
-            ExpressionAttributeNames: { "#x": "groupname" },
-            ExpressionAttributeValues: { ":y": topicsData.Items[value].topic.option[i] },
-            KeyConditionExpression: "#x = :y",
-          };
-          let resultOption = "";
-          resultJSON = await documentClient.query(params).promise();
-          random = Math.floor(Math.random() * resultJSON.Count);
+        resultTrend = [resultJSON.Items[random]];
+        opt[i] = resultTrend[0].name;
+      } else {
+        params = {
+          TableName: "Teleto-options",
+          ExpressionAttributeNames: { "#x": "groupname" },
+          ExpressionAttributeValues: {
+            ":y": topicsData.Items[value].topic.option[i],
+          },
+          KeyConditionExpression: "#x = :y",
+        };
+        let resultOption = "";
+        resultJSON = await ddb.query(params).promise();
+        console.log("elsequery" + JSON.stringify(resultJSON));
+        random = Math.floor(Math.random() * resultJSON.Count);
 
-          resultOption = [resultJSON.Items[random]];
-          opt[i] = resultOption[0].word;
-        }
+        resultOption = [resultJSON.Items[random]];
+        opt[i] = resultOption[0].word;
+      }
     }
     let string = eval("`" + topicsData.Items[value].topic.template + "`");
+    console.log("string" + string);
     topicsData.Items[value].topic.template = string;
     selectedTopics.push(topicsData.Items[value].topic.template);
-  });
+  }
+  console.log("finish db");
   const apigwManagementApi = new AWS.ApiGatewayManagementApi({
     apiVersion: "2018-11-29",
     endpoint:
       event.requestContext.domainName + "/" + event.requestContext.stage,
   });
 
-  const postData = selectedTopics;
+  const postData = JSON.stringify(selectedTopics);
+  //const postData = selectedTopics.toString();
+  console.log("postData" + postData);
   const postCalls = groupData.Items.map(async ({ connectionid }) => {
-      try {
+    try {
       await apigwManagementApi
-          .postToConnection({ ConnectionId: connectionid, Data: postData })
-          .promise();
-      } catch (e) {
+        .postToConnection({ ConnectionId: connectionid, Data: postData })
+        .promise();
+    } catch (e) {
       console.log("error in post api: " + e);
       if (e.statusCode === 410) {
-          console.log(`Found stale connection, deleting ${connectionid}`);
-          await ddb
+        console.log(`Found stale connection, deleting ${connectionid}`);
+        await ddb
           .delete({
-              TableName: CONNECTIONS_TABLE_NAME,
-              Key: { connectionid },
+            TableName: CONNECTIONS_TABLE_NAME,
+            Key: { connectionid },
           })
           .promise();
       } else {
-          throw e;
+        throw e;
       }
     }
-  });    
+  });
 
   try {
-      await Promise.all(postCalls);
+    await Promise.all(postCalls);
   } catch (e) {
-      console.log("error in post api Promise.all: " + e);
-      return { statusCode: 500, body: e.stack };
+    console.log("error in post api Promise.all: " + e);
+    return { statusCode: 500, body: e.stack };
   }
 };
