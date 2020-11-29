@@ -75,7 +75,8 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: e.stack };
   }
   let selectedTopics;
-  if (roomData.topics === null) {
+  if (roomData.Items[0].topics === null) {
+    console.log("roomData.topics is null");
     let topicsData;
     let topicsDataParams = {
       TableName: TOPICS_TABLE_NAME,
@@ -167,11 +168,7 @@ exports.handler = async (event) => {
       });
     }
     console.log("finish db");
-    const apigwManagementApi = new AWS.ApiGatewayManagementApi({
-      apiVersion: "2018-11-29",
-      endpoint:
-        event.requestContext.domainName + "/" + event.requestContext.stage,
-    });
+    // Update Room Table
     let updatedRoomData;
     let updateRoomParams = {
       TableName: ROOMS_TABLE_NAME,
@@ -192,8 +189,15 @@ exports.handler = async (event) => {
       return { statusCode: 500, body: e.stack };
     }
   } else {
+    console.log("roomData.topics is not null");
     selectedTopics = roomData.topics;
   }
+
+  const apigwManagementApi = new AWS.ApiGatewayManagementApi({
+    apiVersion: "2018-11-29",
+    endpoint:
+      event.requestContext.domainName + "/" + event.requestContext.stage,
+  });
   const postData = JSON.stringify({
     action: "getmultitopics",
     topics: selectedTopics,
