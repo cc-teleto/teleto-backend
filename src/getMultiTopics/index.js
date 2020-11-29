@@ -9,7 +9,7 @@ const ddb = new AWS.DynamoDB.DocumentClient({
 });
 
 const CONNECTIONS_TABLE_NAME = process.env.CONNECTIONS_TABLE_NAME;
-const ROOMS_TABLE_NAME = process.env.ROOMS_TABLE_NAME;
+const TOPICS_TABLE_NAME = process.env.TOPICS_TABLE_NAME;
 
 exports.handler = async (event) => {
   const connectionid = event.requestContext.connectionId;
@@ -58,11 +58,11 @@ exports.handler = async (event) => {
   let topicsData;
   let topicsDataParams = {
     TableName: TOPICS_TABLE_NAME,
-    Select: "COUNT"
+    Key: hash
   };
   try {
-    topicsData = await ddb.query(topicsDataParams).promise();
-    console.log("roomData: " + JSON.stringify(topicsData));
+    topicsData = await ddb.scan(topicsDataParams).promise();
+    console.log("topicsData: " + JSON.stringify(topicsData));
   } catch (e) {
     console.log("error in topicsData Query: " + e);
     return { statusCode: 500, body: e.stack };
@@ -88,11 +88,56 @@ exports.handler = async (event) => {
   arr = arr.slice(0,num);
   
   arr.forEach((value) => {
+    for (let i = 0; i < topicsData.Items[value].topic.option.length; i++) {
+        if (topicsData.Items[value].topic.option[i] === "members") {
+          params = {
+            TableName: "Teleto-members",
+            ExpressionAttributeNames: { "#x": "grouphash" },
+            ExpressionAttributeValues: {
+              ":y": event.queryStringParameters["grouphash"],
+            },
+            KeyConditionExpression: "#x = :y",
+          };
+          let resultMember = "";
+          resultJSON = await documentClient.query(params).promise();
+          random = Math.floor(Math.random() * resultJSON.Count);
+
+          resultMember = [resultJSON.Items[random]];
+          opt[i] = resultMember[0].membername;
+        } else if (topicsData.Items[value].topic.option[i] === "trends.twitter") {
+          params = {
+            TableName: "Teleto-trends-twitter",
+          };
+          let resultTrend = "";
+          resultJSON = await documentClient.scan(params).promise();
+          random = Math.floor(Math.random() * resultJSON.Count);
+
+          resultTrend = [resultJSON.Items[random]];
+          opt[i] = resultTrend[0].name;
+        } else {
+          params = {
+            TableName: "Teleto-options",
+            ExpressionAttributeNames: { "#x": "groupname" },
+            ExpressionAttributeValues: { ":y": topicsData.Items[value].topic.option[i] },
+            KeyConditionExpression: "#x = :y",
+          };
+          let resultOption = "";
+          resultJSON = await documentClient.query(params).promise();
+          random = Math.floor(Math.random() * resultJSON.Count);
+
+          resultOption = [resultJSON.Items[random]];
+          opt[i] = resultOption[0].word;
+        }
+    }
     let string = eval("`" + topicsData.Items[value].topic.template + "`");
     topicsData.Items[value].topic.template = string;
     selectedTopics.push(topicsData.Items[value].topic.template);
   });
-
+  const apigwManagementApi = new AWS.ApiGatewayManagementApi({
+    apiVersion: "2018-11-29",
+    endpoint:
+      event.requestContext.domainName + "/" + event.requestContext.stage,
+  });
 
   const postData = selectedTopics;
   const postCalls = groupData.Items.map(async ({ connectionid }) => {
