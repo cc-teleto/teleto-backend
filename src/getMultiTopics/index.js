@@ -145,7 +145,10 @@ exports.handler = async (event) => {
       event.requestContext.domainName + "/" + event.requestContext.stage,
   });
 
-  const postData = JSON.stringify(selectedTopics);
+  const postData = JSON.stringify({
+    action: "getmultitopics",
+    topics: selectedTopics,
+  });
   //const postData = selectedTopics.toString();
   console.log("postData" + postData);
   const postCalls = groupData.Items.map(async ({ connectionid }) => {
