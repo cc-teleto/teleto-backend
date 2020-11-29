@@ -91,11 +91,17 @@ exports.handler = async (event) => {
       endpoint:
         event.requestContext.domainName + "/" + event.requestContext.stage,
     });
-    const postData = randomAngle;
+    const postData = {
+      action: "startroulette",
+      rouletteStopAt: randomAngle,
+    };
     const postCalls = groupData.Items.map(async ({ connectionid }) => {
       try {
         await apigwManagementApi
-          .postToConnection({ ConnectionId: connectionid, Data: postData })
+          .postToConnection({
+            ConnectionId: connectionid,
+            Data: JSON.stringify(postData),
+          })
           .promise();
       } catch (e) {
         console.log("error in post api: " + e);
