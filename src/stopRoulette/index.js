@@ -116,7 +116,7 @@ exports.handler = async (event) => {
 
     return { statusCode: 200, body: "Data sent." };
   } else {
-    console.log("Roulette should not be started.");
+    console.log("Roulette already stopped.");
     return { statusCode: 200, body: "No action required." };
   }
 };
