@@ -381,7 +381,6 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
-definitions:
   Empty:
     type: "object"
     title: "Empty Schema"
