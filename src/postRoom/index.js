@@ -72,6 +72,7 @@ exports.handler = async (event) => {
           rouletteStatus: "Stopped",
           rouletteStopAt: null,
           onWhichScreen: "TalkerRoulette",
+          topics: null,
         },
       };
       await documentClient.put(roomsParams).promise();

@@ -303,7 +303,7 @@ paths:
         contentHandling: "CONVERT_TO_TEXT"
         type: "aws_proxy"
         credentials:
-          Fn::Sub: "${apiRole.Arn}"  
+          Fn::Sub: "${apiRole.Arn}"
     post:
       produces:
         - "application/json"
@@ -381,7 +381,6 @@ paths:
           application/json: '{"statusCode": 200}'
         passthroughBehavior: "when_no_match"
         type: "mock"
-definitions:
   Empty:
     type: "object"
     title: "Empty Schema"
@@ -443,6 +442,13 @@ definitions:
         type: "number"
       onWhichScreen:
         type: "string"
+      topics:
+        type: "object"
+        properties:
+          topic:
+            type: "string"
+          keyword:
+            type: "string"
     title: "getRoomProperty"
   postRoom:
     type: "object"

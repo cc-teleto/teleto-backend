@@ -327,6 +327,66 @@ export class TeletoBackendStack extends cdk.Stack {
       .defaultChild as lambda.CfnFunction;
     forceSendHashLambdaId.overrideLogicalId("SendHashLambda");
 
+    const GetMultiTopicsLambda = new lambda.Function(
+      this,
+      "GetMultiTopicsLambda",
+      {
+        code: new AssetCode("src/getMultiTopics"),
+        handler: "index.handler",
+        runtime: lambda.Runtime.NODEJS_12_X,
+        environment: {
+          CONNECTIONS_TABLE_NAME: connectionsTable.tableName,
+          TOPICS_TABLE_NAME: topicsTable.tableName,
+          ROOMS_TABLE_NAME: roomsTable.tableName,
+          REGION: process.env.AWS_REGION
+            ? process.env.AWS_REGION
+            : "ap-northeast-1",
+        },
+        role: executionLambdaRole,
+      }
+    );
+    const forceGetMultiTopicsLambdaId = GetMultiTopicsLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceGetMultiTopicsLambdaId.overrideLogicalId("GetMultiTopicsLambda");
+
+    const StartRouletteLambda = new lambda.Function(
+      this,
+      "StartRouletteLambda",
+      {
+        code: new AssetCode("src/startRoulette"),
+        handler: "index.handler",
+        runtime: lambda.Runtime.NODEJS_12_X,
+        environment: {
+          CONNECTIONS_TABLE_NAME: connectionsTable.tableName,
+          ROOMS_TABLE_NAME: roomsTable.tableName,
+          REGION: process.env.AWS_REGION
+            ? process.env.AWS_REGION
+            : "ap-northeast-1",
+        },
+        role: executionLambdaRole,
+      }
+    );
+    const forceStartRouletteLambdaId = StartRouletteLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceStartRouletteLambdaId.overrideLogicalId("StartRouletteLambda");
+
+    const StopRouletteLambda = new lambda.Function(this, "StopRouletteLambda", {
+      code: new AssetCode("src/stopRoulette"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        CONNECTIONS_TABLE_NAME: connectionsTable.tableName,
+        ROOMS_TABLE_NAME: roomsTable.tableName,
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceStopRouletteLambdaId = StopRouletteLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceStopRouletteLambdaId.overrideLogicalId("StopRouletteLambda");
+
     // grant access
     membersTable.grantFullAccess(GetMembersLambda);
     membersTable.grantFullAccess(PostMembersLambda);
