@@ -93,6 +93,7 @@ exports.handler = async (event) => {
     });
     const postData = {
       action: "startroulette",
+      roulette: roulette,
       rouletteStopAt: randomAngle,
     };
     const postCalls = groupData.Items.map(async ({ connectionid }) => {
