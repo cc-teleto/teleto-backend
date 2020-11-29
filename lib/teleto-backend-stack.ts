@@ -327,6 +327,26 @@ export class TeletoBackendStack extends cdk.Stack {
       .defaultChild as lambda.CfnFunction;
     forceSendHashLambdaId.overrideLogicalId("SendHashLambda");
 
+    const StartRouletteLambda = new lambda.Function(
+      this,
+      "StartRouletteLambda",
+      {
+        code: new AssetCode("src/startRoulette"),
+        handler: "index.handler",
+        runtime: lambda.Runtime.NODEJS_12_X,
+        environment: {
+          TABLE_NAME: connectionsTable.tableName,
+          REGION: process.env.AWS_REGION
+            ? process.env.AWS_REGION
+            : "ap-northeast-1",
+        },
+        role: executionLambdaRole,
+      }
+    );
+    const forceStartRouletteLambdaId = StartRouletteLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceStartRouletteLambdaId.overrideLogicalId("StartRouletteLambda");
+
     // grant access
     membersTable.grantFullAccess(GetMembersLambda);
     membersTable.grantFullAccess(PostMembersLambda);
