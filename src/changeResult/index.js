@@ -75,26 +75,73 @@ exports.handler = async (event) => {
 
   // Handle Room Status
   const roomStatus = roomData.Items[0];
-  // IF At TalkerRoulette or TopicRoulette screen and rouletteStatus is Stopped
-  if (
-    // (roomStatus.onWhichScreen === "TalkerRoulette" ||
-    //   roomStatus.onWhichScreen === "TopicRoulette") &&
-    roomStatus.rouletteStatus === "Stopped"
-  ) {
-    // Generate random angle
-    const randomAngle = String(Math.floor(Math.random() * 360));
-    console.log("randomAngle: " + randomAngle);
+  // IF At Result screen
+  if (roomStatus.onWhichScreen === "Result") {
+    // Update Room Status
+    let updatedRoomData;
+    let updateRoomParams;
+    if (roulette === "Talker") {
+      updateRoomParams = {
+        TableName: ROOMS_TABLE_NAME,
+        Key: {
+          grouphash: grouphash,
+        },
+        UpdateExpression: "set onwhichscreen = :s, selectedtalker = :t",
+        ExpressionAttributeValues: {
+          ":s": "TalkerRoulette",
+          ":t": null,
+        },
+        ReturnValues: "UPDATED_NEW",
+      };
+    } else if (roulette === "Topic") {
+      updateRoomParams = {
+        TableName: ROOMS_TABLE_NAME,
+        Key: {
+          grouphash: grouphash,
+        },
+        UpdateExpression:
+          "set onwhichscreen = :s, selectedtopic = :t, topics = :tp",
+        ExpressionAttributeValues: {
+          ":s": "TopicRoulette",
+          ":t": null,
+          ":tp": null,
+        },
+        ReturnValues: "UPDATED_NEW",
+      };
+    } else if (roulette === "Both") {
+      updateRoomParams = {
+        TableName: ROOMS_TABLE_NAME,
+        Key: {
+          grouphash: grouphash,
+        },
+        UpdateExpression:
+          "set onwhichscreen = :s, selectedtalker = :talker, selectedtopic = :topic, topics = :tp",
+        ExpressionAttributeValues: {
+          ":s": "TalkerRoulette",
+          ":talker": null,
+          ":topic": null,
+          ":tp": null,
+        },
+        ReturnValues: "UPDATED_NEW",
+      };
+    }
+    try {
+      updatedRoomData = await ddb.update(updateRoomParams).promise();
+      console.log("updatedRoomData: " + JSON.stringify(updatedRoomData));
+    } catch (e) {
+      console.log("error in roomData Update: " + e);
+      return { statusCode: 500, body: e.stack };
+    }
 
-    // Send random angle to group
+    // Send changeresult info to group all members
     const apigwManagementApi = new AWS.ApiGatewayManagementApi({
       apiVersion: "2018-11-29",
       endpoint:
         event.requestContext.domainName + "/" + event.requestContext.stage,
     });
     const postData = {
-      action: "startroulette",
+      action: "changeresult",
       roulette: roulette,
-      rouletteStopAt: randomAngle,
     };
     const postCalls = groupData.Items.map(async ({ connectionid }) => {
       try {
@@ -124,30 +171,6 @@ exports.handler = async (event) => {
       await Promise.all(postCalls);
     } catch (e) {
       console.log("error in post api Promise.all: " + e);
-      return { statusCode: 500, body: e.stack };
-    }
-
-    // Update Room Status in DB
-    const updateRouletteStatus = "Spinning";
-    const updateRouletteStopAt = randomAngle;
-    let updatedRoomData;
-    let updateRoomParams = {
-      TableName: ROOMS_TABLE_NAME,
-      Key: {
-        grouphash: grouphash,
-      },
-      UpdateExpression: "set rouletteStatus = :s, rouletteStopAt = :a",
-      ExpressionAttributeValues: {
-        ":s": updateRouletteStatus,
-        ":a": updateRouletteStopAt,
-      },
-      ReturnValues: "UPDATED_NEW",
-    };
-    try {
-      updatedRoomData = await ddb.update(updateRoomParams).promise();
-      console.log("updatedRoomData: " + JSON.stringify(updatedRoomData));
-    } catch (e) {
-      console.log("error in roomData Update: " + e);
       return { statusCode: 500, body: e.stack };
     }
 

@@ -15,7 +15,7 @@ const ROOMS_TABLE_NAME = process.env.ROOMS_TABLE_NAME;
 exports.handler = async (event) => {
   const myConnectionid = event.requestContext.connectionId;
   const category = JSON.parse(event.body).category;
-  const num = JSON.parse(event.body).num;
+  const num = JSON.parse(event.body).num || 8;
   console.log("connection id: " + myConnectionid);
   // Query GroupHash
   let connectionData;
@@ -96,16 +96,32 @@ exports.handler = async (event) => {
       arr.push(k);
     }
     console.log("COUNT" + arr);
-    let a = arr.length;
 
-    while (a) {
-      let j = Math.floor(Math.random() * a);
-      let t = arr[--a];
-      arr[a] = arr[j];
-      arr[j] = t;
+    const categoryIndexList = [];
+    for (let i = 0; i < topicsData.Count; i++) {
+      for (let j = 0; j < topicsData.Items[i].category.length; j++) {
+        if (topicsData.Items[i].category[j] === category) {
+          categoryIndexList.push(i);
+        }
+      }
     }
-    console.log("COUNT" + arr);
-    const selectedArr = arr.slice(0, num);
+
+    const selectedArr = [];
+    for (let i = 0; i < num; i++) {
+      const rand = Math.floor(Math.random() * categoryIndexList.length);
+      selectedArr.push(categoryIndexList[rand]);
+    }
+    console.log("selectedArr", selectedArr);
+
+    // let a = arr.length;
+
+    // while (a) {
+    //   let j = Math.floor(Math.random() * a);
+    //   let t = arr[--a];
+    //   arr[a] = arr[j];
+    //   arr[j] = t;
+    // }
+    // const selectedArr = arr.slice(0, num);
     let opt = [];
     for (let value of selectedArr) {
       //selectedArr.forEach(async(value) => {
@@ -210,10 +226,10 @@ exports.handler = async (event) => {
   console.log("postData" + postData);
   const postCalls = groupData.Items.map(async ({ connectionid }) => {
     try {
-      if(myConnectionid === connectionid){
-      await apigwManagementApi
-        .postToConnection({ ConnectionId: connectionid, Data: postData })
-        .promise();
+      if (myConnectionid === connectionid) {
+        await apigwManagementApi
+          .postToConnection({ ConnectionId: connectionid, Data: postData })
+          .promise();
       }
     } catch (e) {
       console.log("error in post api: " + e);
