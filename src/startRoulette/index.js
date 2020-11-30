@@ -77,8 +77,8 @@ exports.handler = async (event) => {
   const roomStatus = roomData.Items[0];
   // IF At TalkerRoulette or TopicRoulette screen and rouletteStatus is Stopped
   if (
-    (roomStatus.onWhichScreen === "TalkerRoulette" ||
-      roomStatus.onWhichScreen === "TopicRoulette") &&
+    // (roomStatus.onWhichScreen === "TalkerRoulette" ||
+    //   roomStatus.onWhichScreen === "TopicRoulette") &&
     roomStatus.rouletteStatus === "Stopped"
   ) {
     // Generate random angle
