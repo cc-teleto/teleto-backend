@@ -26,8 +26,9 @@ exports.handler = async (event) => {
       let grouphash;
       const sha512 = crypto.createHash("sha512");
       let current_date;
+      console.log("event.queryStringParameters:", event.queryStringParameters);
       if (event.queryStringParameters !== null) {
-        grouphash = event.queryStringParameters[TABLE_NAME];
+        grouphash = event.queryStringParameters[PRIMARY_KEY];
       } else {
         current_date = new Date().valueOf().toString() + Math.random();
         sha512.update(current_date);
@@ -53,6 +54,7 @@ exports.handler = async (event) => {
             membername: memberArray[i].name,
           },
         };
+        console.log("DB Update params:", params);
         await documentClient.put(params).promise();
       }
       const res = {
