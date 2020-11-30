@@ -96,6 +96,23 @@ exports.handler = async (event) => {
       arr.push(k);
     }
     console.log("COUNT" + arr);
+
+    const categoryIndexList = [];
+    for (let i = 0; i < topicsData.Count; i++) {
+      for (let j = 0; j < topicsData.Items[i].category.length; j++) {
+        if (topicsData.Items[i].category[j] === category) {
+          categoryIndexList.push(i);
+        }
+      }
+    }
+
+    const selectedArr = [];
+    for (let i = 0; i < num; i++) {
+      const rand = Math.floor(Math.random() * categoryIndexList.length);
+      selectedArr.push(categoryIndexList[rand]);
+    }
+    console.log("selectedArr", selectedArr);
+
     // let a = arr.length;
 
     // while (a) {
@@ -104,7 +121,7 @@ exports.handler = async (event) => {
     //   arr[a] = arr[j];
     //   arr[j] = t;
     // }
-    const selectedArr = arr.slice(0, num);
+    // const selectedArr = arr.slice(0, num);
     let opt = [];
     for (let value of selectedArr) {
       //selectedArr.forEach(async(value) => {
