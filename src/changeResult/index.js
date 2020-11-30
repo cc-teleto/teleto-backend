@@ -108,6 +108,22 @@ exports.handler = async (event) => {
         },
         ReturnValues: "UPDATED_NEW",
       };
+    } else if (roulette === "Both") {
+      updateRoomParams = {
+        TableName: ROOMS_TABLE_NAME,
+        Key: {
+          grouphash: grouphash,
+        },
+        UpdateExpression:
+          "set onwhichscreen = :s, selectedtalker = :talker, selectedtopic = :topic, topics = :tp",
+        ExpressionAttributeValues: {
+          ":s": "TalkerRoulette",
+          ":talker": null,
+          ":topic": null,
+          ":tp": null,
+        },
+        ReturnValues: "UPDATED_NEW",
+      };
     }
     try {
       updatedRoomData = await ddb.update(updateRoomParams).promise();
