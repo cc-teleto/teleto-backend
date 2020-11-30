@@ -101,7 +101,7 @@ exports.handler = async (event) => {
         ExpressionAttributeValues: {
           ":s": updateRouletteStatus,
           ":sc": updateOnWhichScreen,
-          ":t": selectedTalker,
+          ":t": selectedTopic,
         },
         ReturnValues: "UPDATED_NEW",
       };
