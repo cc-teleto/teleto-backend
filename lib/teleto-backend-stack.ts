@@ -387,6 +387,23 @@ export class TeletoBackendStack extends cdk.Stack {
       .defaultChild as lambda.CfnFunction;
     forceStopRouletteLambdaId.overrideLogicalId("StopRouletteLambda");
 
+    const ChangeResultLambda = new lambda.Function(this, "ChangeResultLambda", {
+      code: new AssetCode("src/changeResult"),
+      handler: "index.handler",
+      runtime: lambda.Runtime.NODEJS_12_X,
+      environment: {
+        CONNECTIONS_TABLE_NAME: connectionsTable.tableName,
+        ROOMS_TABLE_NAME: roomsTable.tableName,
+        REGION: process.env.AWS_REGION
+          ? process.env.AWS_REGION
+          : "ap-northeast-1",
+      },
+      role: executionLambdaRole,
+    });
+    const forceChangeRessultLambdaId = ChangeResultLambda.node
+      .defaultChild as lambda.CfnFunction;
+    forceChangeRessultLambdaId.overrideLogicalId("ChangeResultLambda");
+
     // grant access
     membersTable.grantFullAccess(GetMembersLambda);
     membersTable.grantFullAccess(PostMembersLambda);
