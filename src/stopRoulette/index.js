@@ -66,9 +66,9 @@ exports.handler = async (event) => {
     const updateRouletteStatus = "Stopped";
     let updatedRoomData;
     let updateRoomParams;
+    let updateOnWhichScreen;
     if (roulette === "Talker") {
       const selectedTalker = JSON.parse(event.body).selectedTalker;
-      let updateOnwhichScreen;
       if (roomStatus.selectedTopic === null) {
         updateOnWhichScreen = "TopicRoulette";
       } else {
@@ -90,7 +90,7 @@ exports.handler = async (event) => {
       };
     } else if (roulette === "Topic") {
       const selectedTopic = JSON.parse(event.body).selectedTopic;
-      let updateOnwhichScreen = "Result";
+      updateOnWhichScreen = "Result";
       updateRoomParams = {
         TableName: ROOMS_TABLE_NAME,
         Key: {
