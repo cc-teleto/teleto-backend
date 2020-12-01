@@ -122,8 +122,8 @@ exports.handler = async (event) => {
     //   arr[j] = t;
     // }
     // const selectedArr = arr.slice(0, num);
-    let opt = [];
     for (let value of selectedArr) {
+      let opt = [];
       //selectedArr.forEach(async(value) => {
       for (let i = 0; i < topicsData.Items[value].topic.option.length; i++) {
         if (topicsData.Items[value].topic.option[i] === "members") {
@@ -177,9 +177,8 @@ exports.handler = async (event) => {
       console.log("string" + string);
       let keyword = eval("`" + topicsData.Items[value].keyword + "`");
       console.log("keyword" + keyword);
-      topicsData.Items[value].topic.template = string;
       selectedTopics.push({
-        topic: topicsData.Items[value].topic.template,
+        topic: string,
         keyword,
       });
     }
