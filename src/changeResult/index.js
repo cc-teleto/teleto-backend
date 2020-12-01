@@ -86,7 +86,7 @@ exports.handler = async (event) => {
         Key: {
           grouphash: grouphash,
         },
-        UpdateExpression: "set onwhichscreen = :s, selectedtalker = :t",
+        UpdateExpression: "set onWhichScreen = :s, selectedTalker = :t",
         ExpressionAttributeValues: {
           ":s": "TalkerRoulette",
           ":t": null,
@@ -100,7 +100,7 @@ exports.handler = async (event) => {
           grouphash: grouphash,
         },
         UpdateExpression:
-          "set onwhichscreen = :s, selectedtopic = :t, topics = :tp",
+          "set onWhichScreen = :s, selectedTopic = :t, topics = :tp",
         ExpressionAttributeValues: {
           ":s": "TopicRoulette",
           ":t": null,
@@ -115,7 +115,7 @@ exports.handler = async (event) => {
           grouphash: grouphash,
         },
         UpdateExpression:
-          "set onwhichscreen = :s, selectedtalker = :talker, selectedtopic = :topic, topics = :tp",
+          "set onWhichScreen = :s, selectedtalker = :talker, selectedTopic = :topic, topics = :tp",
         ExpressionAttributeValues: {
           ":s": "TalkerRoulette",
           ":talker": null,
